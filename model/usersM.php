@@ -40,7 +40,7 @@
       if ($this->data !== false)
       {
         $this->cleanUp();
-        $data = json_encode($this->data);
+        $data = json_encode($this->data, JSON_PRETTY_PRINT);
 
         if (@file_put_contents($this->fname, $data, LOCK_EX) !== false)
         {
