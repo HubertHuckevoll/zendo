@@ -27,7 +27,7 @@ class view
       }
       else
       {
-        $str .= '<li><input class="dateCard__userInput" data-user-idx="0" data-stamp="'.$dateStamp.'" type="text" value="Entfällt!"></li>';
+        $str .= '<li><input class="dateCard__userInput" data-user-idx="0" data-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
       }
 
       $str .= '</ul>'; // dateCard__users
@@ -83,7 +83,10 @@ class view
   {
     $str  = '';
     $str .= '</main>';
-    $str .= '<footer>Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a></footer>';
+    $str .= '<footer>';
+    $str .= 'Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a>.<br>';
+    $str .= 'Dank an <a href="https://newcss.net/" target="_blank">new.css</a>.';
+    $str .= '</footer>';
     $str .= '</body></html>';
 
     return $str;

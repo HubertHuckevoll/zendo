@@ -30,7 +30,7 @@
       }
     }
 
-    public function updateOption(int $stamp, string $option, boolean $val)
+    public function updateOption(int $stamp, string $option, bool $val)
     {
       $this->data[$stamp]['options'][$option] = $val;
     }

@@ -1,7 +1,10 @@
 {
     "1651701600": {
         "users": [
-            "hej!"
-        ]
+            ""
+        ],
+        "options": {
+            "hidden": false
+        }
     }
 }
