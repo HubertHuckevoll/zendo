@@ -22,32 +22,41 @@
 
     public function run()
     {
-      $op = filter_input(INPUT_GET, 'op', FILTER_SANITIZE_STRING);
+      $op = filter_input(INPUT_GET, 'op');
 
       switch ($op)
       {
         case 'updateUser':
-          $stamp = filter_input(INPUT_GET, 'stamp', FILTER_SANITIZE_NUMBER_INT);
-          $idx = filter_input(INPUT_GET, 'idx', FILTER_SANITIZE_NUMBER_INT);
-          $userOrCmd = $this->getUserOrCommand('user');
-
-          switch ($userOrCmd)
+          try
           {
-            case 'disable':
-              $this->users->updateOption($stamp, 'hidden', true);
-            break;
+            $stamp = $this->getTimestamp();
+            $idx = $this->getIdx();
+            $userOrCmd = $this->getUserOrCommand();
 
-            case 'enable':
-              $this->users->updateOption($stamp, 'hidden', false);
-            break;
+            switch ($userOrCmd)
+            {
+              case 'disable':
+                $this->users->updateOption($stamp, 'hidden', true);
+              break;
 
-            default:
-              $this->users->update($stamp, $idx, $userOrCmd);
-            break;
+              case 'enable':
+                $this->users->updateOption($stamp, 'hidden', false);
+              break;
+
+              default:
+                $this->users->update($stamp, $idx, $userOrCmd);
+              break;
+            }
+
+            $msg = $this->users->save();
+            $this->view->drawUserChanged(0, $msg);
           }
-
-          $ret = $this->users->save();
-          $this->view->drawUserChanged($ret);
+          catch(Exception $e)
+          {
+            $msg = $e->getMessage();
+            $code = $e->getCode();
+            $this->view->drawUserChanged($code, $msg);
+          }
         break;
 
         default:
@@ -58,19 +67,47 @@
       }
     }
 
-    protected function getUserOrCommand(string $str): string
+    protected function getTimestamp(): int
+    {
+      $stamp = filter_input(INPUT_GET, 'stamp', FILTER_SANITIZE_NUMBER_INT);
+
+      if (preg_match('/[0-9]{10}/', $stamp) == true)
+      {
+        return $stamp;
+      }
+      else
+      {
+        throw new Exception('Kein gültiger Zeitstempel.');
+      }
+    }
+
+    protected function getIdx(): int
+    {
+      $idx = filter_input(INPUT_GET, 'idx', FILTER_SANITIZE_NUMBER_INT);
+
+      if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
+      {
+        return $idx;
+      }
+      else
+      {
+        throw new Exception('Kein gültiger Index.');
+      }
+    }
+
+    protected function getUserOrCommand(): string
     {
       $matches = [];
       $ret = '';
 
-      $raw = filter_input(INPUT_GET, $str);
+      $raw = filter_input(INPUT_GET, 'user');
       if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
       {
         $ret = $matches[1];
       }
       else
       {
-        $ret = trim(filter_var($raw, FILTER_SANITIZE_STRING));
+        $ret = trim(htmlentities(strip_tags($raw), ENT_QUOTES));
       }
 
       return $ret;

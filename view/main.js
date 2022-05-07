@@ -18,13 +18,13 @@ class ZENDOnnerstag
     let user = ev.target.value;
 
     let result = await fetch('index.php?op=updateUser&stamp='+stamp+'&idx='+idx+'&user='+encodeURIComponent(user));
-    let txt = await result.text();
-    this.flashStatus(ev.target, txt);
+    let ret = await result.json();
+    this.flashStatus(ev.target, ret);
   }
 
-  flashStatus(target, message)
+  flashStatus(target, ret)
   {
-    var toast = document.createTextNode(' ' + message);
+    var toast = document.createTextNode(' ' + ret.msg);
     target.parentNode.insertBefore(toast, target.nextSibling);
     setTimeout(()=>
     {

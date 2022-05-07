@@ -22,7 +22,7 @@ class view
         for ($i = 0; $i < $maxUsers; $i++)
         {
           $user = (isset($data[$dateStamp]['users'][$i])) ? $data[$dateStamp]['users'][$i] : '';
-          $str .= '<li><input class="dateCard__userInput" data-user-idx="'.$i.'" data-stamp="'.$dateStamp.'" type="text" value="'.$user.'"></li>';
+          $str .= '<li><input class="dateCard__userInput" data-user-idx="'.$i.'" data-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'"></li>';
         }
       }
       else
@@ -40,8 +40,13 @@ class view
     echo $str;
   }
 
-  public function drawUserChanged(string $result)
+  public function drawUserChanged(int $code, string $msg)
   {
+    $result = json_encode([
+      'msg' => $msg,
+      'code' => $code
+    ]);
+
     echo $result;
   }
 
