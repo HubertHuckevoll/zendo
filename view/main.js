@@ -36,7 +36,8 @@ class ZENDOnnerstag
     let ret = await result.json();
 
     this.isReloading = true; // prevent consumation of blur events that thappen due to replacing nodes
-    document.querySelector(ret.target).outerHTML = ret.html;
+    let cardElem = document.querySelector(ret.target);
+    cardElem.outerHTML = ret.html;
     this.isReloading = false;
 
     let nextElem = document.querySelector(['input[data-stamp="'+nextStamp+'"][data-user-idx="'+nextIdx+'"']);

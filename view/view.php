@@ -16,7 +16,7 @@ class view
 
       $str .= '<div class="dateCard">';
       $str .= '<h4 class="dateCard__header">Donnerstag, '.$date->format('d.m.Y').'</h4>';
-      $str .= $this->renderDay($data, $dateStamp, '');
+      $str .= $this->renderDay($data, $dateStamp, 0, '');
       $str .= '</div>'; // dateCard
     }
 
@@ -30,7 +30,7 @@ class view
     $result = json_encode(
     [
       'target' => '.dateCard__users__'.$dateStamp,
-      'html' => $this->renderDay($data, $dateStamp, $msg),
+      'html' => $this->renderDay($data, $dateStamp, $code, $msg),
       'msg' => $msg,
       'code' => $code
     ]);
@@ -38,11 +38,19 @@ class view
     echo $result;
   }
 
-  protected function renderDay(array $data, int $dateStamp, string $msg): string
+  protected function renderDay(array $data, int $dateStamp, int $code = 0, string $msg = ''): string
   {
     $str  = '';
     $str .= '<div class="dateCard__users__'.$dateStamp.'">';
-    $str .= '<p class="dateCard__message">'.$msg.'</p>';
+
+    if ($code !== 0)
+    {
+      $str .= '<p class="dateCard__message dateCard__message--error">'.$msg.'</p>';
+    }
+    else
+    {
+      $str .= '<p class="dateCard__message dateCard__message--success">'.$msg.'</p>';
+    }
     $str .= '<ul>';
 
     if (!$data[$dateStamp]['options']['hidden'])

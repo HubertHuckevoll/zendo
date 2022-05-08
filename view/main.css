@@ -3,6 +3,16 @@
   font-size: small;
 }
 
+.dateCard__message--success
+{
+  color: green;
+}
+
+.dateCard__message--error
+{
+  color: red;
+}
+
 footer
 {
   background: var(--nc-bg-2);
