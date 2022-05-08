@@ -91,10 +91,12 @@
               unset($this->data[$stamp]['users'][$i]);
             }
           }
+          array_filter($this->data[$stamp]['users']); // remove empty elements
+          $this->data[$stamp]['users'] = array_values($this->data[$stamp]['users']); // make sure we are just numeric
         }
       }
 
-      ksort($this->data);
+      ksort($this->data); // sort the whole thing by timestamp
     }
 
     protected function isUserAlreadyIn($stamp, $user)

@@ -17,6 +17,8 @@
       $this->calendar = new calendarM();
       $this->view = new view();
       $this->users = new usersM();
+
+      $this->view->maxUsers = $this->maxUsers;
       $this->users->load();
     }
 
@@ -49,20 +51,22 @@
             }
 
             $msg = $this->users->save();
-            $this->view->drawUserChanged(0, $msg);
+            $data = $this->users->get();
+            $this->view->drawUserChanged($data, $stamp, 0, $msg);
           }
           catch(Exception $e)
           {
+            $data = $this->users->get();
             $msg = $e->getMessage();
             $code = $e->getCode();
-            $this->view->drawUserChanged($code, $msg);
+            $this->view->drawUserChanged($data, $stamp, $code, $msg);
           }
         break;
 
         default:
           $data = $this->users->get();
           $period = $this->calendar->getDates();
-          $this->view->drawPage($period, $this->maxUsers, $data);
+          $this->view->drawPage($period, $data);
         break;
       }
     }

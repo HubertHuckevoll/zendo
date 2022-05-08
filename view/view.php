@@ -2,11 +2,13 @@
 
 class view
 {
-  public function drawPage(DatePeriod $period, int $maxUsers, array $data)
+  public int $maxUsers = 10;
+
+  public function drawPage(DatePeriod $period, array $data)
   {
     $str  = '';
 
-    $str .= $this->openPage();
+    $str .= $this->renderHeader();
 
     foreach ($period as $date)
     {
@@ -14,35 +16,21 @@ class view
 
       $str .= '<div class="dateCard">';
       $str .= '<h4 class="dateCard__header">Donnerstag, '.$date->format('d.m.Y').'</h4>';
-
-      $str .= '<ul class="dateCard__users">';
-
-      if (!$data[$dateStamp]['options']['hidden'])
-      {
-        for ($i = 0; $i < $maxUsers; $i++)
-        {
-          $user = (isset($data[$dateStamp]['users'][$i])) ? $data[$dateStamp]['users'][$i] : '';
-          $str .= '<li><input class="dateCard__userInput" data-user-idx="'.$i.'" data-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'"></li>';
-        }
-      }
-      else
-      {
-        $str .= '<li><input class="dateCard__userInput" data-user-idx="0" data-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
-      }
-
-      $str .= '</ul>'; // dateCard__users
-
+      $str .= $this->renderDay($data, $dateStamp, '');
       $str .= '</div>'; // dateCard
     }
 
-    $str .= $this->closePage();
+    $str .= $this->renderFooter();
 
     echo $str;
   }
 
-  public function drawUserChanged(int $code, string $msg)
+  public function drawUserChanged(array $data, int $dateStamp, int $code, string $msg)
   {
-    $result = json_encode([
+    $result = json_encode(
+    [
+      'target' => '.dateCard__users__'.$dateStamp,
+      'html' => $this->renderDay($data, $dateStamp, $msg),
       'msg' => $msg,
       'code' => $code
     ]);
@@ -50,7 +38,35 @@ class view
     echo $result;
   }
 
-  protected function openPage(): string
+  protected function renderDay(array $data, int $dateStamp, string $msg): string
+  {
+    $str  = '';
+    $str .= '<div class="dateCard__users__'.$dateStamp.'">';
+    $str .= '<p class="dateCard__message">'.$msg.'</p>';
+    $str .= '<ul>';
+
+    if (!$data[$dateStamp]['options']['hidden'])
+    {
+      for ($i = 0; $i < $this->maxUsers; $i++)
+      {
+        $user = (isset($data[$dateStamp]['users'][$i])) ? $data[$dateStamp]['users'][$i] : '';
+        $str .= '<li>';
+        $str .= '<input class="dateCard__userInput" data-user-idx="'.$i.'" data-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+        $str .= '</li>';
+      }
+    }
+    else
+    {
+      $str .= '<li><input class="dateCard__userInput" data-user-idx="0" data-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
+    }
+
+    $str .= '</ul>';
+    $str .= '</div>'; // dateCard__users
+
+    return $str;
+  }
+
+  protected function renderHeader(): string
   {
     $erg = '<!DOCTYPE html>'.
            '<html>'.
@@ -84,7 +100,7 @@ class view
     return $erg;
   }
 
-  protected function closePage(): string
+  protected function renderFooter(): string
   {
     $str  = '';
     $str .= '</main>';
