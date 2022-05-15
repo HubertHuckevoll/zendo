@@ -27,6 +27,7 @@ class RecipeJS
           url = ev.target.getAttribute('action');
           params = this.readFormdata(ev.target);
           this.request(url, params);
+
           ev.preventDefault();
           return false;
         break;
@@ -44,6 +45,7 @@ class RecipeJS
             url = ev.target.getAttribute(urlAttr);
             params = this.readDataset(ev.target);
             this.request(url, params);
+
             ev.preventDefault();
             return false;
           }
@@ -80,7 +82,7 @@ class RecipeJS
     let reqData =
     {
       method: 'POST',
-      mode: 'cors',
+      mode: 'no-cors',
       cache: 'no-cache',
       headers: {
         'Accept': 'application/json',

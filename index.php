@@ -28,6 +28,12 @@
 
       switch ($op)
       {
+        case 'refreshDay':
+          $stamp = $this->getTimestamp();
+          $data = $this->users->get();
+          $this->view->drawDay($data, $stamp);
+        break;
+
         case 'updateUser':
           try
           {
@@ -111,7 +117,8 @@
 
     protected function getTimestamp(): int
     {
-      $stamp = filter_input(INPUT_GET, 'stamp', FILTER_SANITIZE_NUMBER_INT);
+      $inp = $this->getJsonInput();
+      $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
 
       if (preg_match('/[0-9]{10}/', $stamp) == true)
       {
@@ -125,7 +132,8 @@
 
     protected function getIdx(): int
     {
-      $idx = filter_input(INPUT_GET, 'idx', FILTER_SANITIZE_NUMBER_INT);
+      $inp = $this->getJsonInput();
+      $idx = filter_var($inp['rcpIdx'], FILTER_SANITIZE_NUMBER_INT);
 
       if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
       {
@@ -142,7 +150,8 @@
       $matches = [];
       $ret = '';
 
-      $raw = filter_input(INPUT_GET, 'user');
+      $inp = $this->getJsonInput();
+      $raw = filter_var($inp['value']);
       if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
       {
         $ret = $matches[1];

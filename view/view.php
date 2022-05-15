@@ -25,17 +25,41 @@ class view
     echo $str;
   }
 
-  public function drawUserChanged(array $data, int $dateStamp, int $code, string $msg)
+  public function drawDay(array $data, int $dateStamp)
   {
-    $result = json_encode(
-    [
-      'target' => '.dateCard__users__'.$dateStamp,
-      'html' => $this->renderDay($data, $dateStamp, $code, $msg),
-      'msg' => $msg,
-      'code' => $code
-    ]);
+    $result = [
+      [
+        'action' => 'dom',
+        'method' => 'replace',
+        'target' => '.dateCard__users__'.$dateStamp,
+        'html' => $this->renderDay($data, $dateStamp)
+      ]
+      ];
 
-    echo $result;
+    echo json_encode($result);
+  }
+
+  public function drawUserChanged(array $data, int $dateStamp, int $code = 0, string $msg = '')
+  {
+    $result = [
+      [
+        'action' => 'dom',
+        'method' => 'replace',
+        'target' => '.dateCard__users__'.$dateStamp,
+        'html' => $this->renderDay($data, $dateStamp, $code, $msg),
+      ],
+      [
+        'action' => 'event',
+        'type' => 'rcp',
+        'timeout' => 2000,
+        'detail' => [
+          'route' => 'index.php?op=refreshDay',
+          'rcpStamp' => $dateStamp
+        ]
+      ]
+    ];
+
+    echo json_encode($result);
   }
 
   protected function renderDay(array $data, int $dateStamp, int $code = 0, string $msg = ''): string
@@ -59,13 +83,13 @@ class view
       {
         $user = (isset($data[$dateStamp]['users'][$i])) ? $data[$dateStamp]['users'][$i] : '';
         $str .= '<li>';
-        $str .= '<input class="dateCard__userInput" data-user-idx="'.$i.'" data-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+        $str .= '<input class="dateCard__userInput" data-rcp-blur="index.php?op=updateUser" data-rcp-idx="'.$i.'" data-rcp-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
         $str .= '</li>';
       }
     }
     else
     {
-      $str .= '<li><input class="dateCard__userInput" data-user-idx="0" data-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
+      $str .= '<li><input class="dateCard__userInput" data-rcp-blur="index.php?op=updateUser" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
     }
 
     $str .= '</ul>';
@@ -89,7 +113,7 @@ class view
              '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
              '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
              '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-             '<script src="./view/main.js" type="text/javascript"></script>'.
+             '<!--script src="./view/main.js" type="text/javascript"></script-->'.
              '<script src="./view/rcp.js" type="text/javascript"></script>'.
            '</head>'.
            '<body>'.
