@@ -188,5 +188,5 @@ class RecipeJS
 
 document.addEventListener('DOMContentLoaded', () =>
 {
-  let app = new ReceipeJS();
+  let app = new RecipeJS();
 });
