@@ -13,6 +13,11 @@
   color: red;
 }
 
+.freaking_awesome_class
+{
+  text-decoration: underline;
+}
+
 footer
 {
   background: var(--nc-bg-2);

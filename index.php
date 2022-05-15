@@ -63,6 +63,44 @@
           }
         break;
 
+        case 'updateHeader':
+          $data = [
+            [
+              'action' => 'dom',
+              'method' => 'replace',
+              'target' => 'h1',
+              'html' => '<h1 data-rcp-click="index.php?op=updateHeader">I shit you not!'.time().'</h1>'
+            ],
+            [
+              'action' => 'event',
+              'type' => 'rcp',
+              'timeout' => 2000,
+              'detail' => [
+                'route' => 'index.php?op=afterEvent',
+                'dummy' => 'yummy'
+              ]
+            ]
+          ];
+
+          echo json_encode($data);
+        break;
+
+        case 'afterEvent':
+          $input = $this->getJsonInput();
+
+          $data = [
+            [
+              'action' => 'css',
+              'method' => 'add',
+              'target' => 'h1',
+              'names' => ['freaking_cool_css_class', 'freaking_awesome_class'],
+              'payload' => $input['route']
+            ]
+          ];
+
+          echo json_encode($data);
+        break;
+
         default:
           $data = $this->users->get();
           $period = $this->calendar->getDates();
@@ -115,6 +153,12 @@
       }
 
       return $ret;
+    }
+
+    protected function getJsonInput()
+    {
+      $input = json_decode(file_get_contents('php://input'), true);
+      return $input;
     }
 
   }

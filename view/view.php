@@ -90,10 +90,12 @@ class view
              '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
              '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
              '<script src="./view/main.js" type="text/javascript"></script>'.
+             '<script src="./view/rcp.js" type="text/javascript"></script>'.
            '</head>'.
            '<body>'.
             '<header>'.
-              '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
+              '<h1 data-rcp-click="index.php?op=updateHeader" data-rcp-value="payload for the rescue!" class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
+              '<div><form action="/submitForm"><input type="text" name="dummytext" value="Yep" /><button type="submit" name="dummysubmit" value="Go">Go</button></form></div>'.
             '</header>';
 
     $erg .= '<main>';
