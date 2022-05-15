@@ -1,6 +1,6 @@
 'use strict';
 
-class ReceipeJS
+class RecipeJS
 {
 
   constructor()
