@@ -58,9 +58,9 @@ class RecipeJS
   {
     let result = [];
     result = Object.assign({}, elem.dataset);
-    if (elem.value)
+    if (elem.value && elem.name)
     {
-      result['value'] = elem.value;
+      result[elem.name] = elem.value;
     }
     return result;
   }
@@ -103,19 +103,9 @@ class RecipeJS
   {
     js.forEach((rcp) =>
     {
-      switch(rcp.action)
+      if (typeof this[rcp.action] === "function")
       {
-        case 'dom':
-          this.dom(rcp);
-        break;
-
-        case 'css':
-          this.css(rcp);
-        break;
-
-        case 'event':
-          this.event(rcp);
-        break;
+        this[rcp.action](rcp);
       }
     });
   }
@@ -184,6 +174,12 @@ class RecipeJS
     {
       window.dispatchEvent(ev);
     }, rcp.timeout);
+  }
+
+  focus(rcp)
+  {
+    let el = document.querySelector(rcp.target);
+    el.focus();
   }
 
 }

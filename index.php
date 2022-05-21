@@ -12,6 +12,11 @@
     public $users = null;
     public $maxUsers = 7;
 
+
+    /**
+     * Konstruktor
+     * ______________________________________________________________
+     */
     public function __construct()
     {
       $this->calendar = new calendarM();
@@ -22,16 +27,26 @@
       $this->users->load();
     }
 
+    /**
+     * Run
+     * ______________________________________________________________
+     */
     public function run()
     {
       $op = filter_input(INPUT_GET, 'op');
 
       switch ($op)
       {
-        case 'refreshDay':
+        case 'userForm':
           $stamp = $this->getTimestamp();
+          $idx = $this->getIdx();
           $data = $this->users->get();
-          $this->view->drawDay($data, $stamp);
+          $this->view->drawDay($data, $stamp, $idx);
+        break;
+
+        case 'refreshHeadline':
+          $stamp = $this->getTimestamp();
+          $this->view->drawDayHeadline($stamp);
         break;
 
         case 'updateUser':
@@ -40,6 +55,9 @@
             $stamp = $this->getTimestamp();
             $idx = $this->getIdx();
             $userOrCmd = $this->getUserOrCommand();
+            $hash = $this->getHash();
+
+            logger::vh($stamp, $idx, $userOrCmd, $hash);
 
             switch ($userOrCmd)
             {
@@ -56,7 +74,7 @@
               break;
             }
 
-            $msg = $this->users->save();
+            $msg = $this->users->save($hash);
             $data = $this->users->get();
             $this->view->drawUserChanged($data, $stamp, 0, $msg);
           }
@@ -69,44 +87,6 @@
           }
         break;
 
-        case 'updateHeader':
-          $data = [
-            [
-              'action' => 'dom',
-              'method' => 'replace',
-              'target' => 'h1',
-              'html' => '<h1 data-rcp-click="index.php?op=updateHeader">I shit you not!'.time().'</h1>'
-            ],
-            [
-              'action' => 'event',
-              'type' => 'rcp',
-              'timeout' => 2000,
-              'detail' => [
-                'route' => 'index.php?op=afterEvent',
-                'dummy' => 'yummy'
-              ]
-            ]
-          ];
-
-          echo json_encode($data);
-        break;
-
-        case 'afterEvent':
-          $input = $this->getJsonInput();
-
-          $data = [
-            [
-              'action' => 'css',
-              'method' => 'add',
-              'target' => 'h1',
-              'names' => ['freaking_cool_css_class', 'freaking_awesome_class'],
-              'payload' => $input['route']
-            ]
-          ];
-
-          echo json_encode($data);
-        break;
-
         default:
           $data = $this->users->get();
           $period = $this->calendar->getDates();
@@ -115,55 +95,96 @@
       }
     }
 
+    /**
+     * extract a timestamp from POST/JSON data
+     * ______________________________________________________________
+     */
     protected function getTimestamp(): int
     {
       $inp = $this->getJsonInput();
-      $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
 
-      if (preg_match('/[0-9]{10}/', $stamp) == true)
+      if (isset($inp['rcpStamp']))
       {
-        return $stamp;
+        $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+
+        if (preg_match('/[0-9]{10}/', $stamp) == true)
+        {
+          return $stamp;
+        }
       }
-      else
-      {
-        throw new Exception('Kein gültiger Zeitstempel.');
-      }
+
+      throw new Exception('Kein gültiger Zeitstempel.');
     }
 
+    /**
+     * extract an Index from POST/JSON data
+     * ______________________________________________________________
+     */
     protected function getIdx(): int
     {
       $inp = $this->getJsonInput();
-      $idx = filter_var($inp['rcpIdx'], FILTER_SANITIZE_NUMBER_INT);
 
-      if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
+      if (isset($inp['rcpIdx']))
       {
-        return $idx;
+        $idx = filter_var($inp['rcpIdx'], FILTER_SANITIZE_NUMBER_INT);
+
+        if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
+        {
+          return $idx;
+        }
       }
-      else
-      {
-        throw new Exception('Kein gültiger Index.');
-      }
+
+      throw new Exception('Kein gültiger Index.');
     }
 
+    /**
+     * extract USER or COMMAND from POST/JSON data
+     * ______________________________________________________________
+     */
     protected function getUserOrCommand(): string
     {
       $matches = [];
       $ret = '';
-
       $inp = $this->getJsonInput();
-      $raw = filter_var($inp['value']);
-      if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
+
+      if (isset($inp['rcpUser']))
       {
-        $ret = $matches[1];
-      }
-      else
-      {
-        $ret = trim(htmlentities(strip_tags($raw), ENT_QUOTES));
+        $raw = $inp['rcpUser'];
+
+        if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
+        {
+          $ret = $matches[1];
+        }
+        else
+        {
+          $ret = trim(htmlentities(strip_tags($raw), ENT_QUOTES));
+        }
+
+        return $ret;
       }
 
-      return $ret;
+      throw new Exception('Kein gültiger Nutzer / Befehl.');
     }
 
+    /**
+     * get Hash
+     * ______________________________________________________________
+     */
+    public function getHash()
+    {
+      $inp = $this->getJsonInput();
+      if (isset($inp['rcpHash']))
+      {
+        return $inp['rcpHash'];
+      }
+
+      throw new Exception('Kein gültiger Hash.');
+    }
+
+    /**
+     * fetch raw JSON input
+     * ______________________________________________________________
+     */
     protected function getJsonInput()
     {
       $input = json_decode(file_get_contents('php://input'), true);

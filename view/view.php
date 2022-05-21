@@ -4,6 +4,10 @@ class view
 {
   public int $maxUsers = 10;
 
+  /**
+   * initial page draw
+   * ________________________________________________________________
+   */
   public function drawPage(DatePeriod $period, array $data)
   {
     $str  = '';
@@ -15,8 +19,8 @@ class view
       $dateStamp = $date->getTimestamp();
 
       $str .= '<div class="dateCard">';
-      $str .= '<h4 class="dateCard__header">Donnerstag, '.$date->format('d.m.Y').'</h4>';
-      $str .= $this->renderDay($data, $dateStamp, 0, '');
+      $str .= $this->renderDayHeadline($dateStamp);
+      $str .= $this->renderDay($data, $dateStamp, null);
       $str .= '</div>'; // dateCard
     }
 
@@ -25,35 +29,71 @@ class view
     echo $str;
   }
 
-  public function drawDay(array $data, int $dateStamp)
+  /**
+   * draw day headline / error / success messages
+   * ________________________________________________________________
+   */
+  public function drawDayHeadline(int $stamp)
+  {
+    $result = [
+      [
+        'action' => 'dom',
+        'method' => 'replace',
+        'target' => '.dateCard__headline__'.$stamp,
+        'html' => $this->renderDayHeadline($stamp),
+      ]
+    ];
+
+    echo json_encode($result);
+  }
+
+  /**
+   * draw users for a day
+   * ________________________________________________________________
+   */
+  public function drawDay(array $data, int $dateStamp, int|null $idx): void
   {
     $result = [
       [
         'action' => 'dom',
         'method' => 'replace',
         'target' => '.dateCard__users__'.$dateStamp,
-        'html' => $this->renderDay($data, $dateStamp)
+        'html' => $this->renderDay($data, $dateStamp, $idx)
+      ],
+      [
+        'action' => 'focus',
+        'target' => '.dateCard__users__'.$dateStamp.' form input[type="text"]'
       ]
-      ];
+    ];
 
     echo json_encode($result);
   }
 
+  /**
+   * draw everythig that happens when a new user has been added / removes / changed
+   * ________________________________________________________________
+   */
   public function drawUserChanged(array $data, int $dateStamp, int $code = 0, string $msg = '')
   {
     $result = [
       [
         'action' => 'dom',
         'method' => 'replace',
+        'target' => '.dateCard__headline__'.$dateStamp,
+        'html' => $this->renderDayHeadline($dateStamp, $code, $msg),
+      ],
+      [
+        'action' => 'dom',
+        'method' => 'replace',
         'target' => '.dateCard__users__'.$dateStamp,
-        'html' => $this->renderDay($data, $dateStamp, $code, $msg),
+        'html' => $this->renderDay($data, $dateStamp),
       ],
       [
         'action' => 'event',
         'type' => 'rcp',
         'timeout' => 2000,
         'detail' => [
-          'route' => 'index.php?op=refreshDay',
+          'route' => 'index.php?op=refreshHeadline',
           'rcpStamp' => $dateStamp
         ]
       ]
@@ -62,34 +102,63 @@ class view
     echo json_encode($result);
   }
 
-  protected function renderDay(array $data, int $dateStamp, int $code = 0, string $msg = ''): string
+  /**
+   * render headline
+   * ________________________________________________________________
+   */
+  protected function renderDayHeadline(int $stamp, int $code = 0, string $msg = '')
+  {
+    $str = '';
+
+    if (($code === 0) && ($msg == ''))
+    {
+      $msg = 'Donnerstag, '.date('d.m.Y', $stamp);
+    }
+
+    $str = '<h4 class="dateCard__headline__'.$stamp.'">'.$msg.'</h4>';
+
+    return $str;
+  }
+
+  /**
+   * render day
+   * ________________________________________________________________
+   */
+  protected function renderDay(array $data, int $dateStamp, int|null $idx = null): string
   {
     $str  = '';
     $str .= '<div class="dateCard__users__'.$dateStamp.'">';
 
-    if ($code !== 0)
-    {
-      $str .= '<p class="dateCard__message dateCard__message--error">'.$msg.'</p>';
-    }
-    else
-    {
-      $str .= '<p class="dateCard__message dateCard__message--success">'.$msg.'</p>';
-    }
     $str .= '<ul>';
 
-    if (!$data[$dateStamp]['options']['hidden'])
+    if (!$this->isHidden($data, $dateStamp))
     {
       for ($i = 0; $i < $this->maxUsers; $i++)
       {
-        $user = (isset($data[$dateStamp]['users'][$i])) ? $data[$dateStamp]['users'][$i] : '';
+        $user = $this->extractUser($data, $dateStamp, $i);
         $str .= '<li>';
-        $str .= '<input class="dateCard__userInput" data-rcp-blur="index.php?op=updateUser" data-rcp-idx="'.$i.'" data-rcp-stamp="'.$dateStamp.'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+        if ($idx === $i)
+        {
+          $str .= '<form action="index.php?op=updateUser">';
+          $str .= '<input name="rcpIdx"   type="hidden" value="'.$i.'">';
+          $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
+          $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
+          $str .= '<input name="rcpUser"  type="text" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+          $str .= '&nbsp;';
+          $str .= '<input name="rcpSubm"  type="submit" value="OK">';
+          $str .= '</form>';
+        }
+        else
+        {
+          $str .= '<input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" name="rcpInput" data-rcp-idx="'.$i.'" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="'.html_entity_decode($user, ENT_QUOTES).'">';
+        }
+
         $str .= '</li>';
       }
     }
     else
     {
-      $str .= '<li><input class="dateCard__userInput" data-rcp-blur="index.php?op=updateUser" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" type="text" value="Entfällt."></li>';
+      $str .= '<li><input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="Entfällt."></li>';
     }
 
     $str .= '</ul>';
@@ -98,6 +167,10 @@ class view
     return $str;
   }
 
+  /**
+   * render page header
+   * ________________________________________________________________
+   */
   protected function renderHeader(): string
   {
     $erg = '<!DOCTYPE html>'.
@@ -113,13 +186,11 @@ class view
              '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
              '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
              '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-             '<!--script src="./view/main.js" type="text/javascript"></script-->'.
              '<script src="./view/rcp.js" type="text/javascript"></script>'.
            '</head>'.
            '<body>'.
             '<header>'.
-              '<h1 data-rcp-click="index.php?op=updateHeader" data-rcp-value="payload for the rescue!" class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
-              '<div><form action="/submitForm"><input type="text" name="dummytext" value="Yep" /><button type="submit" name="dummysubmit" value="Go">Go</button></form></div>'.
+              '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
             '</header>';
 
     $erg .= '<main>';
@@ -134,6 +205,10 @@ class view
     return $erg;
   }
 
+  /**
+   * render page footer
+   * ________________________________________________________________
+   */
   protected function renderFooter(): string
   {
     $str  = '';
@@ -145,6 +220,36 @@ class view
     $str .= '</body></html>';
 
     return $str;
+  }
+
+  /**
+   * is a day hidden?
+   * ________________________________________________________________
+   */
+  protected function isHidden($data, $dateStamp): bool
+  {
+    if (isset($data['content'][$dateStamp]['options']['hidden']))
+    {
+      if ($data['content'][$dateStamp]['options']['hidden'] == true)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * extract a user from the data array
+   * ________________________________________________________________
+   */
+  protected function extractUser($data, $dateStamp, $i): string
+  {
+    if (isset($data['content'][$dateStamp]['users'][$i]))
+    {
+      return $data['content'][$dateStamp]['users'][$i];
+    };
+
+    return '';
   }
 }
 
