@@ -51,20 +51,32 @@ class view
    * draw users for a day
    * ________________________________________________________________
    */
-  public function drawDay(array $data, int $dateStamp, int|null $idx): void
+  public function drawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
   {
-    $result = [
-      [
+    $result = [];
+
+    if ($oldStamp !== null)
+    {
+      array_push($result, [
+        'action' => 'dom',
+        'method' => 'replace',
+        'target' => '.dateCard__users__'.$oldStamp,
+        'html' => $this->renderDay($data, $oldStamp)
+      ]);
+    }
+
+    array_push($result, [
         'action' => 'dom',
         'method' => 'replace',
         'target' => '.dateCard__users__'.$dateStamp,
         'html' => $this->renderDay($data, $dateStamp, $idx)
-      ],
-      [
-        'action' => 'focus',
-        'target' => '.dateCard__users__'.$dateStamp.' form input[type="text"]'
-      ]
-    ];
+    ]);
+
+    array_push($result,
+    [
+      'action' => 'focus',
+      'target' => '.dateCard__users__'.$dateStamp.' form input[type="text"]'
+    ]);
 
     echo json_encode($result);
   }
@@ -75,29 +87,31 @@ class view
    */
   public function drawUserChanged(array $data, int $dateStamp, int $code = 0, string $msg = '')
   {
-    $result = [
-      [
-        'action' => 'dom',
-        'method' => 'replace',
-        'target' => '.dateCard__headline__'.$dateStamp,
-        'html' => $this->renderDayHeadline($dateStamp, $code, $msg),
-      ],
-      [
-        'action' => 'dom',
-        'method' => 'replace',
-        'target' => '.dateCard__users__'.$dateStamp,
-        'html' => $this->renderDay($data, $dateStamp),
-      ],
-      [
-        'action' => 'event',
-        'type' => 'rcp',
-        'timeout' => 2000,
-        'detail' => [
-          'route' => 'index.php?op=refreshHeadline',
-          'rcpStamp' => $dateStamp
-        ]
+    $result = [];
+
+    array_push($result, [
+      'action' => 'dom',
+      'method' => 'replace',
+      'target' => '.dateCard__headline__'.$dateStamp,
+      'html' => $this->renderDayHeadline($dateStamp, $code, $msg),
+    ]);
+
+    array_push($result, [
+      'action' => 'dom',
+      'method' => 'replace',
+      'target' => '.dateCard__users__'.$dateStamp,
+      'html' => $this->renderDay($data, $dateStamp),
+    ]);
+
+    array_push($result, [
+      'action' => 'event',
+      'type' => 'rcp',
+      'timeout' => 2000,
+      'detail' => [
+        'route' => 'index.php?op=refreshHeadline',
+        'rcpStamp' => $dateStamp
       ]
-    ];
+    ]);
 
     echo json_encode($result);
   }
@@ -143,7 +157,7 @@ class view
           $str .= '<input name="rcpIdx"   type="hidden" value="'.$i.'">';
           $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
           $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
-          $str .= '<input name="rcpUser"  type="text" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+          $str .= '<input name="rcpUser"  data-rcp-blur="index.php?op=refreshDay" data-rcp-stamp="'.$dateStamp.'" data-rcp-idx="'.$i.'" data-rcp-hash="'.$data['hash'].'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
           $str .= '&nbsp;';
           $str .= '<input name="rcpSubm"  type="submit" value="OK">';
           $str .= '</form>';
@@ -158,7 +172,23 @@ class view
     }
     else
     {
-      $str .= '<li><input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="Entfällt."></li>';
+      // "0" as int means we received this from the users end, "null" means we just rendered a default value
+      if ($idx === 0)
+      {
+        $str .= '<form action="index.php?op=updateUser">';
+        $str .= '<input name="rcpIdx"   type="hidden" value="0">';
+        $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
+        $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
+        $str .= '<input name="rcpUser"  type="text" type="text" value="Entfällt.">';
+        $str .= '&nbsp;';
+        $str .= '<input name="rcpSubm"  type="submit" value="OK">';
+        $str .= '</form>';
+      }
+      else
+      { // $idx === null
+        $str .= '<li><input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" name="rcpInput" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="Entfällt."></li>';
+      }
+
     }
 
     $str .= '</ul>';
@@ -173,25 +203,25 @@ class view
    */
   protected function renderHeader(): string
   {
-    $erg = '<!DOCTYPE html>'.
-           '<html>'.
-           '<head>'.
-             '<meta charset="utf-8">'.
-             '<title>ZENDOnnerstag</title>'.
-             '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">'.
-             '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">'.
-             '<meta http-equiv="cache-control" content="no-cache">'.
-             '<meta http-equiv="pragma" content="no-cache">'.
-             '<meta http-equiv="expires" content="0">'.
-             '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
-             '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
-             '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-             '<script src="./view/rcp.js" type="text/javascript"></script>'.
-           '</head>'.
-           '<body>'.
-            '<header>'.
-              '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
-            '</header>';
+    $erg = '<!DOCTYPE html>' .
+      '<html>' .
+      '<head>' .
+      '<meta charset="utf-8">' .
+      '<title>ZENDOnnerstag</title>' .
+      '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">' .
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">' .
+      '<meta http-equiv="cache-control" content="no-cache">' .
+      '<meta http-equiv="pragma" content="no-cache">' .
+      '<meta http-equiv="expires" content="0">' .
+      '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">' .
+      '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">' .
+      '<link rel="stylesheet" type="text/css" href="./view/main.css">' .
+      '<script src="./view/rcp.js" type="text/javascript"></script>' .
+      '</head>' .
+      '<body>' .
+      '<header>' .
+      '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>' .
+      '</header>';
 
     $erg .= '<main>';
     $erg .= '<blockquote>';
@@ -252,5 +282,3 @@ class view
     return '';
   }
 }
-
-?>

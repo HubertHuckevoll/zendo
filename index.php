@@ -38,10 +38,30 @@
       switch ($op)
       {
         case 'userForm':
+          $inp = $this->getJsonInput();
+          $oldStamp = null;
+          if (isset($inp['relatedTarget']['rcpStamp']))
+          {
+            $oldStamp = filter_var($inp['relatedTarget']['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+          }
+
           $stamp = $this->getTimestamp();
           $idx = $this->getIdx();
           $data = $this->users->get();
-          $this->view->drawDay($data, $stamp, $idx);
+          $this->view->drawDay($data, $oldStamp, $stamp, $idx);
+        break;
+
+        case 'refreshDay':
+          $inp = $this->getJsonInput();
+          $oldStamp = null;
+          if (isset($inp['relatedTarget']['rcpStamp']))
+          {
+            $oldStamp = filter_var($inp['relatedTarget']['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+          }
+
+          $stamp = $this->getTimestamp();
+          $data = $this->users->get();
+          $this->view->drawDay($data, $oldStamp, $stamp, null);
         break;
 
         case 'refreshHeadline':
@@ -56,8 +76,6 @@
             $idx = $this->getIdx();
             $userOrCmd = $this->getUserOrCommand();
             $hash = $this->getHash();
-
-            logger::vh($stamp, $idx, $userOrCmd, $hash);
 
             switch ($userOrCmd)
             {
@@ -102,6 +120,7 @@
     protected function getTimestamp(): int
     {
       $inp = $this->getJsonInput();
+      $inp = $inp['target'];
 
       if (isset($inp['rcpStamp']))
       {
@@ -123,6 +142,7 @@
     protected function getIdx(): int
     {
       $inp = $this->getJsonInput();
+      $inp = $inp['target'];
 
       if (isset($inp['rcpIdx']))
       {
@@ -146,6 +166,7 @@
       $matches = [];
       $ret = '';
       $inp = $this->getJsonInput();
+      $inp = $inp['target'];
 
       if (isset($inp['rcpUser']))
       {
@@ -173,6 +194,7 @@
     public function getHash()
     {
       $inp = $this->getJsonInput();
+      $inp = $inp['target'];
       if (isset($inp['rcpHash']))
       {
         return $inp['rcpHash'];

@@ -17,7 +17,7 @@ class RecipeJS
   handle(ev)
   {
     let url = '';
-    let params = [];
+    let params = {};
 
     if (!this.isReloading)
     {
@@ -25,7 +25,11 @@ class RecipeJS
       {
         case 'submit':
           url = ev.target.getAttribute('action');
-          params = this.readFormdata(ev.target);
+          params.target = this.readFormdata(ev.target);
+          if (ev.relatedTarget)
+          {
+            params.relatedTarget = this.readFormdata(ev.relatedTarget);
+          }
           this.request(url, params);
 
           ev.preventDefault();
@@ -34,7 +38,7 @@ class RecipeJS
 
         case 'rcp':
           url = ev.detail.route;
-          params = ev.detail;
+          params.target = ev.detail;
           this.request(url, params);
         break;
 
@@ -42,9 +46,22 @@ class RecipeJS
           let urlAttr = 'data-rcp-' + ev.type;
           if ((ev.target.hasAttribute) && (ev.target.hasAttribute(urlAttr)))
           {
-            url = ev.target.getAttribute(urlAttr);
-            params = this.readDataset(ev.target);
-            this.request(url, params);
+            if (!
+                 (
+                   (ev.type == 'blur') &&
+                   (ev.relatedTarget) && (ev.relatedTarget.tagName == 'INPUT') && (ev.relatedTarget.type == 'submit')
+                 )
+               )
+            {
+              url = ev.target.getAttribute(urlAttr);
+              params.target = this.readDataset(ev.target);
+              if (ev.relatedTarget)
+              {
+                params.relatedTarget = this.readDataset(ev.relatedTarget);
+              }
+
+              this.request(url, params);
+            }
 
             ev.preventDefault();
             return false;
@@ -84,7 +101,8 @@ class RecipeJS
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
-      headers: {
+      headers:
+      {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
@@ -112,13 +130,19 @@ class RecipeJS
 
   dom(rcp)
   {
-    this.isReloading = true; // prevent consumation of events that thappen while replacing nodes
+    let elem = null;
+    this.isReloading = true; // prevent consumation of events that thappen while we're busy replacing nodes (... but does it?)
+
+    elem = document.querySelector(rcp.target);
 
     switch(rcp.method)
     {
       case 'replace':
-        let elem = document.querySelector(rcp.target);
         elem.outerHTML = rcp.html;
+      break;
+
+      case 'replaceInner':
+        elem.innerHTML = rcp.html;
       break;
     }
 
@@ -179,7 +203,10 @@ class RecipeJS
   focus(rcp)
   {
     let el = document.querySelector(rcp.target);
-    el.focus();
+    if (el)
+    {
+      el.focus();
+    }
   }
 
 }

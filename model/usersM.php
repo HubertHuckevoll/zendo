@@ -138,15 +138,18 @@
         }
         else
         {
-          for ($i=0; $i < count($this->data['content'][$stamp]['users']); $i++)
+          if (isset($this->data['content'][$stamp]['users']))
           {
-            if (trim($this->getUser($stamp, $i)) == '')
+            for ($i=0; $i < count($this->data['content'][$stamp]['users']); $i++)
             {
-              unset($this->data['content'][$stamp]['users'][$i]);
+              if (trim($this->getUser($stamp, $i)) == '')
+              {
+                unset($this->data['content'][$stamp]['users'][$i]);
+              }
             }
+            array_filter($this->data['content'][$stamp]['users']); // remove empty elements
+            $this->data['content'][$stamp]['users'] = array_values($this->data['content'][$stamp]['users']); // make sure we are just numeric
           }
-          array_filter($this->data['content'][$stamp]['users']); // remove empty elements
-          $this->data['content'][$stamp]['users'] = array_values($this->data['content'][$stamp]['users']); // make sure we are just numeric
         }
       }
 

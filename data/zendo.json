@@ -2,8 +2,55 @@
     "1653516000": {
         "users": [
             "Queen",
-            "Led Zeppelin",
-            "The Who"
+            "Zero 1",
+            "The Who",
+            "Weirdo"
+        ],
+        "options": {
+            "hidden": false
+        }
+    },
+    "1654120800": {
+        "options": {
+            "hidden": false
+        },
+        "users": [
+            "The Jacksons",
+            "Micha",
+            "Jermaine"
+        ]
+    },
+    "1654725600": {
+        "users": [
+            "Lucy",
+            "Weirdo",
+            "Queen"
+        ]
+    },
+    "1655330400": {
+        "users": [
+            "Liu",
+            "fool",
+            "Schloss"
+        ],
+        "options": {
+            "hidden": false
+        }
+    },
+    "1655935200": {
+        "users": [
+            "GEOS"
+        ]
+    },
+    "1656540000": {
+        "users": [
+            "Polizei"
+        ]
+    },
+    "1659564000": {
+        "users": [
+            "Arzt",
+            "Hellseherin"
         ]
     },
     "1660168800": {
@@ -12,7 +59,13 @@
             "Lost",
             "A",
             "Lot",
-            "Of days"
+            "Heree",
+            "Or are we"
+        ]
+    },
+    "1660773600": {
+        "users": [
+            "Oh really"
         ]
     }
 }
