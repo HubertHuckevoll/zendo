@@ -26,10 +26,6 @@ class RecipeJS
       case 'submit':
         url = ev.target.getAttribute('action');
         params.target = this.readFormdata(ev.target);
-        if (ev.relatedTarget)
-        {
-          params.relatedTarget = this.readFormdata(ev.relatedTarget);
-        }
         this.request(url, params);
 
         ev.preventDefault();
@@ -270,6 +266,28 @@ class RecipeJS
       {
         reject('focus: "('+ rcp.target +')" yields no element.');
       }
+    });
+  }
+
+  error(rcp)
+  {
+    return new Promise((resolve, reject) =>
+    {
+      switch (rcp.method)
+      {
+        case 'console':
+          console.log(rcp.msg);
+        break;
+      }
+      resolve();
+    });
+  }
+
+  nop(rcp)
+  {
+    return new Promise((resolve, reject) =>
+    {
+      resolve();
     });
   }
 }

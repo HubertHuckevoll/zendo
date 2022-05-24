@@ -35,81 +35,76 @@
     {
       $op = filter_input(INPUT_GET, 'op');
 
-      switch ($op)
+      try
       {
-        case 'userForm':
-          $inp = $this->getJsonInput();
-          $oldStamp = null;
-          if (isset($inp['relatedTarget']['rcpStamp']))
-          {
-            $oldStamp = filter_var($inp['relatedTarget']['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
-          }
-
-          $stamp = $this->getTimestamp();
-          $idx = $this->getIdx();
-          $data = $this->users->get();
-          $this->view->drawDay($data, $oldStamp, $stamp, $idx);
-        break;
-
-        case 'refreshDay':
-          $inp = $this->getJsonInput();
-          $oldStamp = null;
-          if (isset($inp['relatedTarget']['rcpStamp']))
-          {
-            $oldStamp = filter_var($inp['relatedTarget']['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
-          }
-
-          $stamp = $this->getTimestamp();
-          $data = $this->users->get();
-          $this->view->drawDay($data, $oldStamp, $stamp, null);
-        break;
-
-        case 'refreshHeadline':
-          $stamp = $this->getTimestamp();
-          $this->view->drawDayHeadline($stamp);
-        break;
-
-        case 'updateUser':
-          try
-          {
+        switch ($op)
+        {
+          case 'userForm':
+            $oldStamp = $this->getRelatedTimestamp();
             $stamp = $this->getTimestamp();
             $idx = $this->getIdx();
-            $userOrCmd = $this->getUserOrCommand();
-            $hash = $this->getHash();
+            $data = $this->users->get();
+            $this->view->drawDay($data, $oldStamp, $stamp, $idx);
+          break;
 
-            switch ($userOrCmd)
+          case 'refreshDay':
+            $oldStamp = $this->getRelatedTimestamp();
+            $stamp = $this->getTimestamp();
+            $data = $this->users->get();
+            $this->view->drawDay($data, $oldStamp, $stamp, null);
+          break;
+
+          case 'refreshHeadline':
+            $stamp = $this->getTimestamp();
+            $this->view->drawDayHeadline($stamp);
+          break;
+
+          case 'updateUser':
+            try
             {
-              case 'disable':
-                $this->users->updateOption($stamp, 'hidden', true);
-              break;
+              $stamp = $this->getTimestamp();
+              $idx = $this->getIdx();
+              $userOrCmd = $this->getUserOrCommand();
+              $hash = $this->getHash();
 
-              case 'enable':
-                $this->users->updateOption($stamp, 'hidden', false);
-              break;
+              switch ($userOrCmd)
+              {
+                case 'disable':
+                  $this->users->updateOption($stamp, 'hidden', true);
+                break;
 
-              default:
-                $this->users->update($stamp, $idx, $userOrCmd);
-              break;
+                case 'enable':
+                  $this->users->updateOption($stamp, 'hidden', false);
+                break;
+
+                default:
+                  $this->users->update($stamp, $idx, $userOrCmd);
+                break;
+              }
+
+              $msg = $this->users->save($hash);
+              $data = $this->users->get();
+              $this->view->drawUserChanged($data, $stamp, 0, $msg);
             }
+            catch(Exception $e)
+            {
+              $data = $this->users->get();
+              $msg = $e->getMessage();
+              $code = $e->getCode();
+              $this->view->drawUserChanged($data, $stamp, $code, $msg);
+            }
+          break;
 
-            $msg = $this->users->save($hash);
+          default:
             $data = $this->users->get();
-            $this->view->drawUserChanged($data, $stamp, 0, $msg);
-          }
-          catch(Exception $e)
-          {
-            $data = $this->users->get();
-            $msg = $e->getMessage();
-            $code = $e->getCode();
-            $this->view->drawUserChanged($data, $stamp, $code, $msg);
-          }
-        break;
-
-        default:
-          $data = $this->users->get();
-          $period = $this->calendar->getDates();
-          $this->view->drawPage($period, $data);
-        break;
+            $period = $this->calendar->getDates();
+            $this->view->drawPage($period, $data);
+          break;
+        }
+      }
+      catch (Exception $e)
+      {
+        $this->view->drawFatalError($e);
       }
     }
 
@@ -133,6 +128,30 @@
       }
 
       throw new Exception('Kein gültiger Zeitstempel.');
+    }
+
+    /**
+     * Timestamp for relatedTarget
+     * ______________________________________________________________
+     */
+    protected function getRelatedTimestamp(): int|null
+    {
+      $inp = $this->getJsonInput();
+
+      if (isset($inp['relatedTarget']))
+      {
+        $inp = $inp['relatedTarget'];
+        if (isset($inp['rcpStamp']))
+        {
+          $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+          if (preg_match('/[0-9]{10}/', $stamp) == true)
+          {
+            return $stamp;
+          }
+        }
+      }
+
+      return null;
     }
 
     /**

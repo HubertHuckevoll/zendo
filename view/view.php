@@ -118,6 +118,24 @@ class view
   }
 
   /**
+   * draw fatal error
+   * ________________________________________________________________
+   */
+  public function drawFatalError($e)
+  {
+    $result = [];
+
+    array_push($result,
+    [
+      'action' => 'error',
+      'method' => 'console',
+      'msg' => $e->getMessage()
+    ]);
+
+    echo json_encode($result);
+  }
+
+  /**
    * render headline
    * ________________________________________________________________
    */
