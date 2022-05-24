@@ -5,9 +5,11 @@ class RecipeJS
 
   constructor()
   {
-    this.isReloading = false;
-
     this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
+  }
+
+  init()
+  {
     this.events.forEach((evName) =>
     {
       window.addEventListener(evName, this.handle.bind(this), true);
@@ -19,66 +21,73 @@ class RecipeJS
     let url = '';
     let params = {};
 
-    if (!this.isReloading)
+    switch (ev.type)
     {
-      switch (ev.type)
-      {
-        case 'submit':
-          url = ev.target.getAttribute('action');
-          params.target = this.readFormdata(ev.target);
-          if (ev.relatedTarget)
+      case 'submit':
+        url = ev.target.getAttribute('action');
+        params.target = this.readFormdata(ev.target);
+        if (ev.relatedTarget)
+        {
+          params.relatedTarget = this.readFormdata(ev.relatedTarget);
+        }
+        this.request(url, params);
+
+        ev.preventDefault();
+        return false;
+      break;
+
+      case 'rcp':
+        url = ev.detail.route;
+        params.target = ev.detail;
+        this.request(url, params);
+      break;
+
+      default:
+        let urlAttr = 'data-rcp-' + ev.type;
+        if ((ev.target.hasAttribute) && (ev.target.hasAttribute(urlAttr)))
+        {
+          if (!this.isBlurOnSubmit(ev))
           {
-            params.relatedTarget = this.readFormdata(ev.relatedTarget);
+            url = ev.target.getAttribute(urlAttr);
+            params.target = this.readDataset(ev.target);
+            if (ev.relatedTarget)
+            {
+              params.relatedTarget = this.readDataset(ev.relatedTarget);
+            }
+
+            this.request(url, params);
           }
-          this.request(url, params);
 
           ev.preventDefault();
           return false;
-        break;
-
-        case 'rcp':
-          url = ev.detail.route;
-          params.target = ev.detail;
-          this.request(url, params);
-        break;
-
-        default:
-          let urlAttr = 'data-rcp-' + ev.type;
-          if ((ev.target.hasAttribute) && (ev.target.hasAttribute(urlAttr)))
-          {
-            if (!
-                 (
-                   (ev.type == 'blur') &&
-                   (ev.relatedTarget) && (ev.relatedTarget.tagName == 'INPUT') && (ev.relatedTarget.type == 'submit')
-                 )
-               )
-            {
-              url = ev.target.getAttribute(urlAttr);
-              params.target = this.readDataset(ev.target);
-              if (ev.relatedTarget)
-              {
-                params.relatedTarget = this.readDataset(ev.relatedTarget);
-              }
-
-              this.request(url, params);
-            }
-
-            ev.preventDefault();
-            return false;
-          }
-        break;
-      }
+        }
+      break;
     }
+  }
+
+  isBlurOnSubmit(ev)
+  {
+    if (
+      (ev.type == 'blur') &&
+      (ev.relatedTarget) && (ev.relatedTarget.tagName == 'INPUT') && (ev.relatedTarget.type == 'submit') &&
+      (ev.target.form == ev.relatedTarget.form)
+    )
+    {
+      return true;
+    }
+    return false;
   }
 
   readDataset(elem)
   {
     let result = [];
+
     result = Object.assign({}, elem.dataset);
     if (elem.value && elem.name)
     {
       result[elem.name] = elem.value;
     }
+
     return result;
   }
 
@@ -119,99 +128,154 @@ class RecipeJS
 
   cook(js)
   {
-    js.forEach((rcp) =>
+    js.forEach(async (rcp) =>
     {
       if (typeof this[rcp.action] === "function")
       {
-        this[rcp.action](rcp);
+        try
+        {
+          if (rcp.await && rcp.await == true)
+          {
+            await this[rcp.action](rcp);
+          }
+          else
+          {
+            this[rcp.action](rcp);
+          }
+        }
+        catch(e)
+        {
+          console.log(e);
+        }
       }
     });
   }
 
   dom(rcp)
   {
-    let elem = null;
-    this.isReloading = true; // prevent consumation of events that thappen while we're busy replacing nodes (... but does it?)
-
-    elem = document.querySelector(rcp.target);
-
-    switch(rcp.method)
+    return new Promise((resolve, reject) =>
     {
-      case 'replace':
-        elem.outerHTML = rcp.html;
-      break;
+      let elem = document.querySelector(rcp.target);
 
-      case 'replaceInner':
-        elem.innerHTML = rcp.html;
-      break;
-    }
+      if (elem)
+      {
+        switch(rcp.method)
+        {
+          case 'replace':
+            elem.outerHTML = rcp.html;
+          break;
 
-    this.isReloading = false;
+          case 'replaceInner':
+            elem.innerHTML = rcp.html;
+          break;
+        }
+
+        resolve();
+      }
+      else
+      {
+        reject('dom: "('+ rcp.target +')" yields no element.');
+      }
+    });
   }
 
   css(rcp)
   {
-    let target = document.querySelector(rcp.target);
-
-    switch(rcp.method)
+    return new Promise((resolve, reject) =>
     {
-      case 'add':
-        rcp.names.forEach((name) =>
-        {
-          target.classList.add(name);
-        });
-      break;
+      let target = document.querySelector(rcp.target);
 
-      case 'remove':
-        rcp.names.forEach((name) =>
+      if (target)
+      {
+        switch(rcp.method)
         {
-          target.classList.remove(name);
-        });
-      break;
+          case 'add':
+            rcp.names.forEach((name) =>
+            {
+              target.classList.add(name);
+            });
+          break;
 
-      case 'toggle':
-        rcp.names.forEach((name) =>
-        {
-          target.classList.toggle(name);
-        });
-      break;
+          case 'remove':
+            rcp.names.forEach((name) =>
+            {
+              target.classList.remove(name);
+            });
+          break;
 
-      case 'replace':
-        target.classList.replace(rcp.oldName, rcp.newName);
-      break;
-    }
+          case 'toggle':
+            rcp.names.forEach((name) =>
+            {
+              target.classList.toggle(name);
+            });
+          break;
+
+          case 'replace':
+            target.classList.replace(rcp.oldName, rcp.newName);
+          break;
+        }
+
+        resolve();
+      }
+      else
+      {
+        reject('css: "('+ rcp.target +')" yields no elements.');
+      }
+    });
   }
 
   event(rcp)
   {
-    // set up event
-    let evDetails =
+    return new Promise((resolve, reject) =>
     {
-      detail: rcp.detail,
-      bubbles: true,
-      cancelable: true
-    }
-    let ev = new CustomEvent(rcp.type, evDetails);
+      // set up event
+      let evDetails =
+      {
+        detail: rcp.detail,
+        bubbles: true,
+        cancelable: true
+      }
+      let ev = new CustomEvent(rcp.type, evDetails);
 
-    // dispatch event
-    window.setTimeout(() =>
-    {
-      window.dispatchEvent(ev);
-    }, rcp.timeout);
+      // dispatch event
+      window.setTimeout(() =>
+      {
+        window.dispatchEvent(ev);
+        resolve();
+      }, rcp.timeout);
+    });
   }
 
   focus(rcp)
   {
-    let el = document.querySelector(rcp.target);
-    if (el)
+    return new Promise((resolve, reject) =>
     {
-      el.focus();
-    }
-  }
+      let el = document.querySelector(rcp.target);
 
+      if (el)
+      {
+        switch (rcp.method)
+        {
+          case 'focus':
+            el.focus();
+          break;
+
+          case 'blur':
+            el.blur();
+          break;
+        }
+        resolve();
+      }
+      else
+      {
+        reject('focus: "('+ rcp.target +')" yields no element.');
+      }
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () =>
 {
   let app = new RecipeJS();
+  app.init();
 });

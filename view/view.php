@@ -55,7 +55,7 @@ class view
   {
     $result = [];
 
-    if ($oldStamp !== null)
+    if (($oldStamp !== null) && ($oldStamp != $dateStamp))
     {
       array_push($result, [
         'action' => 'dom',
@@ -75,6 +75,7 @@ class view
     array_push($result,
     [
       'action' => 'focus',
+      'method' => 'focus',
       'target' => '.dateCard__users__'.$dateStamp.' form input[type="text"]'
     ]);
 
