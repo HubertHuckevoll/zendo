@@ -4,6 +4,7 @@
   require_once('./view/view.php');
   require_once('./model/calendarM.php');
   require_once('./model/usersM.php');
+  require_once('./view/RecipeJS.php');
 
   class app
   {
@@ -51,7 +52,7 @@
             $oldStamp = $this->getRelatedTimestamp();
             $stamp = $this->getTimestamp();
             $data = $this->users->get();
-            $this->view->drawDay($data, $oldStamp, $stamp, null);
+            $this->view->drawDay($data, $oldStamp, $stamp);
           break;
 
           case 'refreshHeadline':

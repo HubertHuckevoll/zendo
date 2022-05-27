@@ -35,16 +35,10 @@ class view
    */
   public function drawDayHeadline(int $stamp)
   {
-    $result = [
-      [
-        'action' => 'dom',
-        'method' => 'replace',
-        'target' => '.dateCard__headline__'.$stamp,
-        'html' => $this->renderDayHeadline($stamp),
-      ]
-    ];
+    $rcp = new RecipeJS();
 
-    echo json_encode($result);
+    $rcp->domReplace('.dateCard__headline__'.$stamp, $this->renderDayHeadline($stamp));
+    $rcp->drop();
   }
 
   /**
@@ -53,33 +47,21 @@ class view
    */
   public function drawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
   {
-    $result = [];
+    $rcp = new RecipeJS();
 
     if (($oldStamp !== null) && ($oldStamp != $dateStamp))
     {
-      array_push($result, [
-        'action' => 'dom',
-        'method' => 'replace',
-        'target' => '.dateCard__users__'.$oldStamp,
-        'html' => $this->renderDay($data, $oldStamp)
-      ]);
+      $rcp->domReplace('.dateCard__users__'.$oldStamp, $this->renderDay($data, $oldStamp));
     }
 
-    array_push($result, [
-        'action' => 'dom',
-        'method' => 'replace',
-        'target' => '.dateCard__users__'.$dateStamp,
-        'html' => $this->renderDay($data, $dateStamp, $idx)
-    ]);
+    $rcp->domReplace('.dateCard__users__'.$dateStamp, $this->renderDay($data, $dateStamp, $idx));
 
-    array_push($result,
-    [
-      'action' => 'focus',
-      'method' => 'focus',
-      'target' => '.dateCard__users__'.$dateStamp.' form input[type="text"]'
-    ]);
+    if ($idx !== null)
+    {
+      $rcp->focusFocus('.dateCard__users__'.$dateStamp.' form input[type="text"]');
+    }
 
-    echo json_encode($result);
+    $rcp->drop();
   }
 
   /**
@@ -88,33 +70,16 @@ class view
    */
   public function drawUserChanged(array $data, int $dateStamp, int $code = 0, string $msg = '')
   {
-    $result = [];
+    $rcp = new RecipeJS();
 
-    array_push($result, [
-      'action' => 'dom',
-      'method' => 'replace',
-      'target' => '.dateCard__headline__'.$dateStamp,
-      'html' => $this->renderDayHeadline($dateStamp, $code, $msg),
-    ]);
+    $rcp->domReplace('.dateCard__headline__'.$dateStamp, $this->renderDayHeadline($dateStamp, $code, $msg));
+    $rcp->domReplace('.dateCard__users__'.$dateStamp, $this->renderDay($data, $dateStamp));
+    $rcp->eventRcp([
+      'route' => 'index.php?op=refreshHeadline',
+      'rcpStamp' => $dateStamp
+    ], 2000);
 
-    array_push($result, [
-      'action' => 'dom',
-      'method' => 'replace',
-      'target' => '.dateCard__users__'.$dateStamp,
-      'html' => $this->renderDay($data, $dateStamp),
-    ]);
-
-    array_push($result, [
-      'action' => 'event',
-      'type' => 'rcp',
-      'timeout' => 2000,
-      'detail' => [
-        'route' => 'index.php?op=refreshHeadline',
-        'rcpStamp' => $dateStamp
-      ]
-    ]);
-
-    echo json_encode($result);
+    $rcp->drop();
   }
 
   /**
@@ -123,16 +88,11 @@ class view
    */
   public function drawFatalError($e)
   {
-    $result = [];
+    $rcp = new RecipeJS();
 
-    array_push($result,
-    [
-      'action' => 'error',
-      'method' => 'console',
-      'msg' => $e->getMessage()
-    ]);
+    $rcp->errorConsole($e->getMessage());
 
-    echo json_encode($result);
+    $rcp->drop();
   }
 
   /**
@@ -176,38 +136,69 @@ class view
           $str .= '<input name="rcpIdx"   type="hidden" value="'.$i.'">';
           $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
           $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
-          $str .= '<input name="rcpUser"  data-rcp-blur="index.php?op=refreshDay" data-rcp-stamp="'.$dateStamp.'" data-rcp-idx="'.$i.'" data-rcp-hash="'.$data['hash'].'" type="text" value="'.html_entity_decode($user, ENT_QUOTES).'">';
+          $str .= '<input name="rcpUser"
+                          data-rcp-blur="index.php?op=refreshDay"
+                          data-rcp-stamp="'.$dateStamp.'"
+                          data-rcp-idx="'.$i.'"
+                          data-rcp-hash="'.$data['hash'].'"
+                          type="text"
+                          value="'.html_entity_decode($user, ENT_QUOTES).'">';
           $str .= '&nbsp;';
-          $str .= '<input name="rcpSubm"  type="submit" value="OK">';
+          $str .= '<input name="rcpSubm"
+                          type="submit"
+                          value="OK">';
           $str .= '</form>';
         }
         else
-        {
-          $str .= '<input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" name="rcpInput" data-rcp-idx="'.$i.'" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="'.html_entity_decode($user, ENT_QUOTES).'">';
+        { // FIXMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE (blur!!!)
+          //                           data-rcp-blur="index.php?op=refreshDay"
+          $str .= '<input class="dateCard__userInput"
+                          data-rcp-focus="index.php?op=userForm"
+                          name="rcpInput"
+                          data-rcp-idx="'.$i.'"
+                          data-rcp-stamp="'.$dateStamp.'"
+                          data-rcp-hash="'.$data['hash'].'"
+                          type="text"
+                          readonly
+                          value="'.html_entity_decode($user, ENT_QUOTES).'">';
         }
-
         $str .= '</li>';
       }
     }
     else
     {
-      // "0" as int means we received this from the users end, "null" means we just rendered a default value
+      $str .= '<li>';
+      // "0" as int means we received this from the users end, "null" means we just render a default value
       if ($idx === 0)
       {
         $str .= '<form action="index.php?op=updateUser">';
         $str .= '<input name="rcpIdx"   type="hidden" value="0">';
         $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
         $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
-        $str .= '<input name="rcpUser"  type="text" type="text" value="Entfällt.">';
+        $str .= '<input name="rcpUser"
+                        type="text"
+                        data-rcp-blur="index.php?op=refreshDay"
+                        data-rcp-stamp="'.$dateStamp.'"
+                        data-rcp-hash="'.$data['hash'].'"
+                        value="Entfällt.">';
         $str .= '&nbsp;';
         $str .= '<input name="rcpSubm"  type="submit" value="OK">';
         $str .= '</form>';
       }
       else
       { // $idx === null
-        $str .= '<li><input class="dateCard__userInput" data-rcp-focus="index.php?op=userForm" name="rcpInput" data-rcp-idx="0" data-rcp-stamp="'.$dateStamp.'" data-rcp-hash="'.$data['hash'].'" type="text" readonly value="Entfällt."></li>';
-      }
 
+        $str .= '<input class="dateCard__userInput"
+                        data-rcp-focus="index.php?op=userForm"
+                        name="rcpInput"
+                        data-rcp-idx="0"
+                        data-rcp-stamp="'.$dateStamp.'"
+                        data-rcp-hash="'.$data['hash'].'"
+                        type="text"
+                        readonly
+                        value="Entfällt.">';
+      }
+      $str .= '</li>';
     }
 
     $str .= '</ul>';
@@ -225,27 +216,27 @@ class view
     $erg = '<!DOCTYPE html>' .
       '<html>' .
       '<head>' .
-      '<meta charset="utf-8">' .
-      '<title>ZENDOnnerstag</title>' .
-      '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">' .
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">' .
-      '<meta http-equiv="cache-control" content="no-cache">' .
-      '<meta http-equiv="pragma" content="no-cache">' .
-      '<meta http-equiv="expires" content="0">' .
-      '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">' .
-      '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">' .
-      '<link rel="stylesheet" type="text/css" href="./view/main.css">' .
-      '<script src="./view/rcp.js" type="text/javascript"></script>' .
-      '</head>' .
-      '<body>' .
-      '<header>' .
-      '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>' .
+      '<meta charset="utf-8">'.
+      '<title>ZENDOnnerstag</title>'.
+      '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">'.
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">'.
+      '<meta http-equiv="cache-control" content="no-cache">'.
+      '<meta http-equiv="pragma" content="no-cache">'.
+      '<meta http-equiv="expires" content="0">'.
+      '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
+      '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
+      '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
+      '<script src="./view/RecipeJS.js" type="text/javascript"></script>'.
+      '</head>'.
+      '<body>'.
+      '<header>'.
+      '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
       '</header>';
 
     $erg .= '<main>';
     $erg .= '<blockquote>';
     $erg .= 'Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>.
-             Wir sitzen donnerstags von 18.30 Uhr bis ca. 20:30 Uhr in der <a href="https://goo.gl/maps/zZJsrxE17p4Pp4gU7" target="_blank">Puschkinstraße 1</a> Zazen.
+             Wir sitzen donnerstags von 18.30 Uhr bis ca. 20.30 Uhr in der <a href="https://goo.gl/maps/zZJsrxE17p4Pp4gU7" target="_blank">Puschkinstraße 1</a> Zazen.
              Bitte tragt Euch bei den einzelnen Donnerstagen ein.<br><br>
              Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten,
              es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass ihr sorgsam damit umgeht.';

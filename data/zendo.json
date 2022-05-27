@@ -1,19 +1,15 @@
 {
-    "1653516000": {
-        "options": {
-            "hidden": true
-        }
-    },
     "1654120800": {
         "options": {
             "hidden": false
         },
         "users": [
             "The Jacksons",
-            "Michaela S.",
-            "Jermaine Jackson",
-            "Combo",
-            "Mamacita!"
+            "Spr&uuml;nge",
+            "Andrea",
+            "Dummy",
+            "Levke",
+            "Queen of all my dreams"
         ]
     },
     "1654725600": {
@@ -81,7 +77,8 @@
     },
     "1660773600": {
         "users": [
-            "Oh really"
+            "Oh really",
+            "Lucy"
         ]
     }
 }
