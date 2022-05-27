@@ -82,16 +82,14 @@ class RecipeJS
     {
       this.requestCounter++;
       this.log('Requesting: ', reqNo, url, params);
-      await this.request(reqNo, url, params); // don't leave out the await!!!
+      await this.request(reqNo, url, params); // don't fuck with the await, I dare you!!!
       this.requestCounter--;
 
       if (this.requestCounter == 0)
       {
-        this.log('Starting to cook.');
-
-        this.requestQueue.forEach((js) =>
+        this.requestQueue.forEach(async (js) =>
         {
-          this.cook(js);
+          await this.cook(js);
         });
 
         this.requestQueue = [];
@@ -180,13 +178,13 @@ class RecipeJS
     let resp = await fetch(url, reqData);
     let js = await resp.json();
 
-    this.log('Setting request no ', reqNo, 'to', js);
+    this.log('Fetched data for request no ', reqNo, ', is ', js);
     this.requestQueue[reqNo] = js;
 
     return true;
   }
 
-  cook(js)
+  async cook(js)
   {
     for (let rcp of js)
     {
@@ -196,15 +194,13 @@ class RecipeJS
         {
           if (rcp.action !== 'event')
           {
-            this.log('Detaching event handler.');
             this.detach();
           }
 
-          let p = this[rcp.action](rcp);
+          await this[rcp.action](rcp);
 
           if (rcp.action !== 'event')
           {
-            this.log('Attaching event handler.');
             this.attach();
           }
         }
@@ -224,7 +220,7 @@ class RecipeJS
 
       if (elem)
       {
-        this.log('Executing "' + rcp.action + '/' + rcp.method + '" on "' + rcp.target + '"');
+        this.log('Executing', rcp.action, '/', rcp.method, ' on ', rcp.target);
 
         switch (rcp.method)
         {
@@ -254,7 +250,7 @@ class RecipeJS
 
       if (target)
       {
-        this.log('Executing "' + rcp.action + '/' + rcp.method + '" on "' + rcp.target + '"');
+        this.log('Executing', rcp.action, '/', rcp.method, ' on ', rcp.target);
 
         switch (rcp.method)
         {
@@ -293,9 +289,11 @@ class RecipeJS
     });
   }
 
-  event(rcp) {
-    return new Promise((resolve, reject) => {
-      this.log('Executing "' + rcp.action + '/' + rcp.type + '"');
+  event(rcp)
+  {
+    return new Promise((resolve, reject) =>
+    {
+      this.log('Executing', rcp.action, '/', rcp.type);
 
       // set up event
       let evDetails =
@@ -307,21 +305,23 @@ class RecipeJS
       let ev = new CustomEvent(rcp.type, evDetails);
 
       // dispatch event
-      window.setTimeout(() => {
+      window.setTimeout(() =>
+      {
         window.dispatchEvent(ev);
         resolve();
       }, rcp.timeout);
     });
   }
 
-  focus(rcp) {
+  focus(rcp)
+  {
     return new Promise((resolve, reject) =>
     {
       let el = document.querySelector(rcp.target);
 
       if (el)
       {
-        this.log('Executing "' + rcp.action + '/' + rcp.method + '" on "' + rcp.target + '"');
+        this.log('Executing', rcp.action, '/', rcp.method, ' on ', rcp.target);
 
         switch (rcp.method)
         {
@@ -372,35 +372,6 @@ class RecipeJS
       console.log(...vars);
     }
   }
-
-  wait(name)
-  {
-    return new Promise((resolve, reject) =>
-    {
-      let ms = null;
-      if (name == 'data-rcp-blur')
-      {
-        ms = 3000;
-      }
-      else
-      {
-        ms = 1000;
-      }
-
-      this.log('Waiting for ', name);
-      window.setTimeout(() =>
-      {
-        this.log('Now resuming after wait for ', name);
-        resolve();
-      }, ms);
-    });
-  }
-
-  arrayInsertAt(array, index, ...elements)
-  {
-    array.splice(index, 0, ...elements);
-  }
-
 }
 
 document.addEventListener('DOMContentLoaded', () =>
