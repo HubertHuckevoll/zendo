@@ -5,9 +5,9 @@ class RecipeJS
 
   constructor()
   {
-    this.events = ['click', 'change', 'blur', 'focus', 'focusin', 'focusout', 'submit', 'rcp'];
+    this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
     this.handler = this.handleEvents.bind(this);
-    this.logging = true;
+    this.logging = false;
     this.requestCounter = 0;
     this.requestNo = 0;
     this.requestQueue = [];
@@ -41,8 +41,9 @@ class RecipeJS
         params = this.readForm(ev);
         this.requestNo++;
 
-        ev.preventDefault();
         this.exec(url, params, this.requestNo);
+
+        ev.preventDefault();
         return false;
       break;
 
@@ -65,10 +66,9 @@ class RecipeJS
             params = this.readData(ev);
 
             this.requestNo++;
-
-            ev.preventDefault();
             this.exec(url, params, this.requestNo);
 
+            ev.preventDefault(); // must be called before any await
             return false;
           }
         }
@@ -87,11 +87,7 @@ class RecipeJS
 
       if (this.requestCounter == 0)
       {
-        this.requestQueue.forEach(async (js) =>
-        {
-          await this.cook(js);
-        });
-
+        this.cook();
         this.requestQueue = [];
         this.requestNo = 0;
       }
@@ -100,62 +96,6 @@ class RecipeJS
     {
       this.log(e);
     }
-  }
-
-  isBlurOnSubmit(ev)
-  {
-    if (
-      (ev.type == 'blur') &&
-      (ev.relatedTarget) && (ev.relatedTarget.tagName == 'INPUT') && (ev.relatedTarget.type == 'submit') &&
-      (ev.target.form == ev.relatedTarget.form)
-    )
-    {
-      return true;
-    }
-    return false;
-  }
-
-  readData(ev)
-  {
-    let result = {};
-    let el = ev.target;
-    let relEl = null;
-    if (ev.relatedTarget)
-    {
-      relEl = ev.relatedTarget;
-    }
-
-    result.target = Object.assign({}, el.dataset);
-    if (el.value && el.name)
-    {
-      result.target[el.name] = el.value;
-    }
-
-    if (relEl)
-    {
-      result.relatedTarget = Object.assign({}, relEl.dataset);
-      if (relEl.value && relEl.name)
-      {
-        result.relatedTarget[relEl.name] = relEl.value;
-      }
-    }
-
-    return result;
-  }
-
-  readForm(ev)
-  {
-    let result = {};
-    let form = ev.target;
-
-    result.target = {}; // this is necessary!!!
-
-    for (let formElem of form.elements)
-    {
-      result.target[formElem.name] = formElem.value;
-    }
-
-    return result;
   }
 
   async request(reqNo, url, params)
@@ -184,32 +124,35 @@ class RecipeJS
     return true;
   }
 
-  async cook(js)
+  cook()
   {
-    for (let rcp of js)
+    this.requestQueue.forEach(async (js) =>
     {
-      if (typeof this[rcp.action] === "function")
+      for (let rcp of js)
       {
-        try
+        if (typeof this[rcp.action] === "function")
         {
-          if (rcp.action !== 'event')
+          try
           {
-            this.detach();
+            if (rcp.action !== 'event')
+            {
+              this.detach();
+            }
+
+            await this[rcp.action](rcp);
+
+            if (rcp.action !== 'event')
+            {
+              this.attach();
+            }
           }
-
-          await this[rcp.action](rcp);
-
-          if (rcp.action !== 'event')
+          catch (e)
           {
-            this.attach();
+            console.error(e);
           }
-        }
-        catch (e)
-        {
-          console.error(e);
         }
       }
-    }
+    });
   }
 
   dom(rcp)
@@ -363,6 +306,62 @@ class RecipeJS
     {
       resolve();
     });
+  }
+
+  isBlurOnSubmit(ev)
+  {
+    if (
+      (ev.type == 'blur') &&
+      (ev.relatedTarget) && (ev.relatedTarget.tagName == 'INPUT') && (ev.relatedTarget.type == 'submit') &&
+      (ev.target.form == ev.relatedTarget.form)
+    )
+    {
+      return true;
+    }
+    return false;
+  }
+
+  readData(ev)
+  {
+    let result = {};
+    let el = ev.target;
+    let relEl = null;
+    if (ev.relatedTarget)
+    {
+      relEl = ev.relatedTarget;
+    }
+
+    result.target = Object.assign({}, el.dataset);
+    if (el.value && el.name)
+    {
+      result.target[el.name] = el.value;
+    }
+
+    if (relEl)
+    {
+      result.relatedTarget = Object.assign({}, relEl.dataset);
+      if (relEl.value && relEl.name)
+      {
+        result.relatedTarget[relEl.name] = relEl.value;
+      }
+    }
+
+    return result;
+  }
+
+  readForm(ev)
+  {
+    let result = {};
+    let form = ev.target;
+
+    result.target = {}; // this is necessary!!!
+
+    for (let formElem of form.elements)
+    {
+      result.target[formElem.name] = formElem.value;
+    }
+
+    return result;
   }
 
   log(...vars)
