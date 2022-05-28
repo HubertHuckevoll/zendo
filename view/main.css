@@ -3,19 +3,9 @@
   font-size: small;
 }
 
-.dateCard__message--success
+.dateCard__headline--raised
 {
-  color: green;
-}
-
-.dateCard__message--error
-{
-  color: red;
-}
-
-.freaking_awesome_class
-{
-  text-decoration: underline;
+  color: aquamarine;
 }
 
 footer

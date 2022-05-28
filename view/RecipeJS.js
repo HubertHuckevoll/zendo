@@ -7,7 +7,7 @@ class RecipeJS
   {
     this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
     this.handler = this.handleEvents.bind(this);
-    this.logging = false;
+    this.logging = true;
     this.requestCounter = 0;
     this.requestNo = 0;
     this.requestQueue = [];
@@ -39,9 +39,10 @@ class RecipeJS
       case 'submit':
         url = ev.target.getAttribute('action');
         params = this.readForm(ev);
-        this.requestNo++;
 
         this.exec(url, params, this.requestNo);
+
+        this.requestNo++;
 
         ev.preventDefault();
         return false;
@@ -50,9 +51,10 @@ class RecipeJS
       case 'rcp':
         url = ev.detail.route;
         params.target = ev.detail;
-        this.requestNo++;
 
         this.exec(url, params, this.requestNo);
+
+        this.requestNo++;
       break;
 
       default:
@@ -65,8 +67,9 @@ class RecipeJS
             url = ev.target.getAttribute(rcpEvent);
             params = this.readData(ev);
 
-            this.requestNo++;
             this.exec(url, params, this.requestNo);
+
+            this.requestNo++;
 
             ev.preventDefault(); // must be called before any await
             return false;
@@ -80,10 +83,10 @@ class RecipeJS
   {
     try
     {
-      this.requestCounter++;
+      this.requestCounter++; // don't put this in "request"!!!
       this.log('Requesting: ', reqNo, url, params);
       await this.request(reqNo, url, params); // don't fuck with the await, I dare you!!!
-      this.requestCounter--;
+      this.requestCounter--; // don't put this in "request"!!!
 
       if (this.requestCounter == 0)
       {
@@ -100,28 +103,33 @@ class RecipeJS
 
   async request(reqNo, url, params)
   {
-    let reqData =
+    try
     {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      headers:
+      let reqData =
       {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(params) // body data type must match "Content-Type" header
-    };
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        headers:
+        {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(params) // body data type must match "Content-Type" header
+      };
 
-    let resp = await fetch(url, reqData);
-    let js = await resp.json();
+      const resp = await fetch(url, reqData);
+      const js = await resp.json();
 
-    this.log('Fetched data for request no ', reqNo, ', is ', js);
-    this.requestQueue[reqNo] = js;
-
-    return true;
+      this.log('Fetched data for request no', reqNo, ', is:', js);
+      this.requestQueue[reqNo] = js;
+    }
+    catch (e)
+    {
+      this.log(e);
+    }
   }
 
   cook()
@@ -169,11 +177,11 @@ class RecipeJS
         {
           case 'replace':
             elem.outerHTML = rcp.html;
-            break;
+          break;
 
           case 'replaceInner':
             elem.innerHTML = rcp.html;
-            break;
+          break;
         }
 
         resolve();
@@ -202,25 +210,25 @@ class RecipeJS
             {
               target.classList.add(cl);
             };
-            break;
+          break;
 
           case 'removeClass':
             for (let cl of rcp.classes)
             {
               target.classList.remove(cl);
             };
-            break;
+          break;
 
           case 'toggleClass':
             for (let cl of rcp.classes)
             {
               target.classList.toggle(cl);
             };
-            break;
+          break;
 
           case 'replaceClass':
             target.classList.replace(rcp.oldName, rcp.newName);
-            break;
+          break;
         }
 
         resolve();
@@ -326,6 +334,7 @@ class RecipeJS
     let result = {};
     let el = ev.target;
     let relEl = null;
+
     if (ev.relatedTarget)
     {
       relEl = ev.relatedTarget;

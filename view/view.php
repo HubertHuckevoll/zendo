@@ -74,6 +74,7 @@ class view
 
     $rcp->domReplace('.dateCard__headline__'.$dateStamp, $this->renderDayHeadline($dateStamp, $code, $msg));
     $rcp->domReplace('.dateCard__users__'.$dateStamp, $this->renderDay($data, $dateStamp));
+    $rcp->cssAddClass('.dateCard__headline__'.$dateStamp, ['dateCard__headline--raised']);
     $rcp->eventRcp([
       'route' => 'index.php?op=refreshHeadline',
       'rcpStamp' => $dateStamp
@@ -150,8 +151,7 @@ class view
           $str .= '</form>';
         }
         else
-        { // FIXMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE (blur!!!)
-          //                           data-rcp-blur="index.php?op=refreshDay"
+        {
           $str .= '<input class="dateCard__userInput"
                           data-rcp-focus="index.php?op=userForm"
                           name="rcpInput"
