@@ -8,6 +8,18 @@
   color: aquamarine;
 }
 
+.fadeOut
+{
+  transition: opacity .3s;
+  opacity: 0;
+}
+
+.fadeIn
+{
+  transition: opacity .3s;
+  opacity: 1;
+}
+
 footer
 {
   background: var(--nc-bg-2);

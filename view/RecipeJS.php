@@ -83,6 +83,30 @@ class RecipeJS
     ]);
   }
 
+  public function cssHide(string $target, string $hideClass, string $showClass, bool $await = false): void
+  {
+    array_push($this->out, [
+      'action' => 'css',
+      'method' => 'hide',
+      'target' => $target,
+      'showClass' => $showClass,
+      'hideClass' => $hideClass,
+      'await' => $await
+    ]);
+  }
+
+  public function cssShow(string $target, string $hideClass, string $showClass, bool $await = false): void
+  {
+    array_push($this->out, [
+      'action' => 'css',
+      'method' => 'show',
+      'target' => $target,
+      'showClass' => $showClass,
+      'hideClass' => $hideClass,
+      'await' => $await
+    ]);
+  }
+
   public function eventRcp(array $detail, int $timeout): void
   {
     array_push($this->out, [

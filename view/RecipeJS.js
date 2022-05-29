@@ -8,6 +8,7 @@ class RecipeJS
     this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
     this.handler = this.handleEvents.bind(this);
     this.logging = true;
+
     this.requestCounter = 0;
     this.requestNo = 0;
     this.requestQueue = [];
@@ -83,10 +84,10 @@ class RecipeJS
   {
     try
     {
-      this.requestCounter++; // don't put this in "request"!!!
+      this.requestCounter++;
       this.log('Requesting: ', reqNo, url, params);
       await this.request(reqNo, url, params); // don't fuck with the await, I dare you!!!
-      this.requestCounter--; // don't put this in "request"!!!
+      this.requestCounter--;
 
       if (this.requestCounter == 0)
       {
@@ -147,7 +148,14 @@ class RecipeJS
               this.detach();
             }
 
-            await this[rcp.action](rcp);
+            if (rcp.await == true)
+            {
+              await this[rcp.action](rcp);
+            }
+            else
+            {
+              this[rcp.action](rcp);
+            }
 
             if (rcp.action !== 'event')
             {
@@ -156,7 +164,7 @@ class RecipeJS
           }
           catch (e)
           {
-            console.error(e);
+            this.log(e);
           }
         }
       }
@@ -193,51 +201,112 @@ class RecipeJS
     });
   }
 
+
   css(rcp)
   {
-    return new Promise((resolve, reject) =>
+    let promises = [];
+    let result = null;
+    let nodes = document.querySelectorAll(rcp.target);
+    this.log('Executing', rcp.action, '/', rcp.method, ' on ', rcp.target);
+
+    if (nodes.length > 0)
     {
-      let target = document.querySelector(rcp.target);
-
-      if (target)
+      switch (rcp.method)
       {
-        this.log('Executing', rcp.action, '/', rcp.method, ' on ', rcp.target);
-
-        switch (rcp.method)
-        {
-          case 'addClass':
-            for (let cl of rcp.classes)
+        case 'addClass':
+          result = new Promise((resolve, reject) =>
+          {
+            nodes.forEach((node) =>
             {
-              target.classList.add(cl);
-            };
-          break;
+              for (let cl of rcp.classes)
+              {
+                node.classList.add(cl);
+              };
+            });
+            resolve();
+          });
+        break;
 
-          case 'removeClass':
-            for (let cl of rcp.classes)
+        case 'removeClass':
+          result = new Promise((resolve, reject) =>
+          {
+            nodes.forEach((node) =>
             {
-              target.classList.remove(cl);
-            };
-          break;
+              for (let cl of rcp.classes)
+              {
+                node.classList.remove(cl);
+              };
+            });
+            resolve();
+          });
+        break;
 
-          case 'toggleClass':
-            for (let cl of rcp.classes)
+        case 'toggleClass':
+          result = new Promise((resolve, reject) =>
+          {
+            nodes.forEach((node) =>
             {
-              target.classList.toggle(cl);
-            };
-          break;
+              for (let cl of rcp.classes)
+              {
+                node.classList.toggle(cl);
+              };
+            });
+            resolve();
+          });
+        break;
 
-          case 'replaceClass':
-            target.classList.replace(rcp.oldName, rcp.newName);
-          break;
-        }
+        case 'replaceClass':
+          result = new Promise((resolve, reject) =>
+          {
+            nodes.forEach((node) =>
+            {
+              node.classList.replace(rcp.oldName, rcp.newName);
+            });
+            resolve();
+          });
+        break;
 
-        resolve();
+        case 'hide':
+          nodes.forEach((node) =>
+          {
+            let elemP = new Promise(function(resolve, reject)
+            {
+              node.ontransitionend = () => resolve();
+              node.classList.remove(rcp.showClass);
+              node.classList.add(rcp.hideClass);
+            });
+
+            promises.push(elemP);
+          });
+
+          result = Promise.all(promises);
+          promises = [];
+        break;
+
+        case 'show':
+          nodes.forEach((node) =>
+          {
+            let elemP = new Promise(function(resolve, reject)
+            {
+              node.ontransitionend = () => resolve();
+              node.classList.remove(rcp.hideClass);
+              node.classList.add(rcp.showClass);
+            });
+
+            promises.push(elemP);
+          });
+
+          result = Promise.all(promises);
+          promises = [];
+        break;
       }
-      else
-      {
-        reject('css: "' + rcp.target + '" yields no elements.');
-      }
-    });
+    }
+    else
+    {
+      throw('css: "' + rcp.target + '" yields no elements.');
+    }
+
+    return result;
   }
 
   event(rcp)

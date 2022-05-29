@@ -37,7 +37,10 @@ class view
   {
     $rcp = new RecipeJS();
 
-    $rcp->domReplace('.dateCard__headline__'.$stamp, $this->renderDayHeadline($stamp));
+    $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
+    $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp));
+    $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
+
     $rcp->drop();
   }
 
@@ -72,9 +75,10 @@ class view
   {
     $rcp = new RecipeJS();
 
-    $rcp->domReplace('.dateCard__headline__'.$dateStamp, $this->renderDayHeadline($dateStamp, $code, $msg));
-    $rcp->domReplace('.dateCard__users__'.$dateStamp, $this->renderDay($data, $dateStamp));
-    $rcp->cssAddClass('.dateCard__headline__'.$dateStamp, ['dateCard__headline--raised']);
+    $rcp->cssHide('.dateCard__headline__'.$dateStamp, 'fadeOut', 'fadeIn', true);
+    $rcp->domReplaceInner('.dateCard__headline__'.$dateStamp, $this->renderDayHeadlineInner($dateStamp, $code, $msg));
+    $rcp->cssShow('.dateCard__headline__'.$dateStamp, 'fadeOut', 'fadeIn', true);
+
     $rcp->eventRcp([
       'route' => 'index.php?op=refreshHeadline',
       'rcpStamp' => $dateStamp
@@ -103,15 +107,19 @@ class view
   protected function renderDayHeadline(int $stamp, int $code = 0, string $msg = '')
   {
     $str = '';
+    $str = '<h4 class="dateCard__headline__'.$stamp.'">'.$this->renderDayHeadlineInner($stamp, $code, $msg).'</h4>';
 
+    return $str;
+  }
+
+  protected function renderDayHeadlineInner(int $stamp, int $code = 0, string $msg = '')
+  {
     if (($code === 0) && ($msg == ''))
     {
       $msg = 'Donnerstag, '.date('d.m.Y', $stamp);
     }
 
-    $str = '<h4 class="dateCard__headline__'.$stamp.'">'.$msg.'</h4>';
-
-    return $str;
+    return $msg;
   }
 
   /**
