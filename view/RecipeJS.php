@@ -135,6 +135,14 @@ class RecipeJS
     ]);
   }
 
+  public function reload(): void
+  {
+    array_push($this->out,
+    [
+      'action' => 'reload'
+    ]);
+  }
+
   public function drop(): void
   {
     echo json_encode($this->out);

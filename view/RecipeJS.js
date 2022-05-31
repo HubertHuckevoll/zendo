@@ -1,8 +1,17 @@
 'use strict';
 
+/**
+ * RecipeJS
+ * your final JavaScript library, lol
+ *
+ */
 class RecipeJS
 {
 
+  /**
+   * Konstruktor
+   * ________________________________________________________________
+   */
   constructor()
   {
     this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
@@ -14,6 +23,10 @@ class RecipeJS
     this.requestQueue = [];
   }
 
+  /**
+   * attach our event listeners
+   * ________________________________________________________________
+   */
   attach()
   {
     for (let evName of this.events)
@@ -22,6 +35,10 @@ class RecipeJS
     };
   }
 
+  /**
+   * detach all of the event listeners
+   * ________________________________________________________________
+   */
   detach()
   {
     for (let evName of this.events)
@@ -30,6 +47,10 @@ class RecipeJS
     };
   }
 
+  /**
+   * main event handling entry point
+   * ________________________________________________________________
+   */
   handleEvents(ev)
   {
     let url = '';
@@ -80,6 +101,27 @@ class RecipeJS
     }
   }
 
+  /**
+   * Executor function
+   * Is called whenever a registered event happens.
+   *
+   * AWAIT waits for the "request" to finish, but as the function
+   * is called multiple times when multiple events happen at the
+   * same time it doesn't wait for the requests to return "in order".
+   *
+   * That's why we use the request counter.
+   * Whenever we issue a request, the request counter goes up
+   * Whenever a request returns, the request counter goes down.
+   * When all "concurrent" requests have returned, the request counter
+   * should be zero again. All requests are  assigned a reuest number (reqNo)
+   * and the result for each request is stored in the requestQueue with
+   * the request number as index (see the "request" function).
+   *
+   * Once all requests have settled down we can start cooking the recipes
+   * in the order of how the events happened.
+   * ________________________________________________________________
+   *
+   */
   async exec(url, params, reqNo)
   {
     try
@@ -102,6 +144,10 @@ class RecipeJS
     }
   }
 
+  /**
+   * do the request
+   * ________________________________________________________________
+   */
   async request(reqNo, url, params)
   {
     try
@@ -133,6 +179,10 @@ class RecipeJS
     }
   }
 
+  /**
+   * cook our recipes.
+   * ________________________________________________________________
+   */
   cook()
   {
     this.requestQueue.forEach(async (js) =>
@@ -171,6 +221,10 @@ class RecipeJS
     });
   }
 
+  /**
+   * DOM action(s)
+   * ________________________________________________________________
+   */
   dom(rcp)
   {
     return new Promise((resolve, reject) =>
@@ -201,7 +255,10 @@ class RecipeJS
     });
   }
 
-
+  /**
+   * CSS action(s)
+   * ________________________________________________________________
+   */
   css(rcp)
   {
     let promises = [];
@@ -309,6 +366,10 @@ class RecipeJS
     return result;
   }
 
+  /**
+   * EVENT action
+   * ________________________________________________________________
+   */
   event(rcp)
   {
     return new Promise((resolve, reject) =>
@@ -333,6 +394,10 @@ class RecipeJS
     });
   }
 
+  /**
+   * FOCUS action(s)
+   * ________________________________________________________________
+   */
   focus(rcp)
   {
     return new Promise((resolve, reject) =>
@@ -363,6 +428,10 @@ class RecipeJS
     });
   }
 
+  /**
+   * ERROR action(s)
+   * ________________________________________________________________
+   */
   error(rcp)
   {
     return new Promise((resolve, reject) =>
@@ -377,6 +446,12 @@ class RecipeJS
     });
   }
 
+  /**
+   * NOP action
+   * do nothing
+   * useful when just sending state changes to the server
+   * ________________________________________________________________
+   */
   nop(rcp)
   {
     return new Promise((resolve, reject) =>
@@ -385,6 +460,26 @@ class RecipeJS
     });
   }
 
+  /**
+   * RELOAD action
+   * reload the page
+   * ________________________________________________________________
+   */
+  reload(rcp)
+  {
+    return new Promise((resolve, reject) =>
+    {
+      window.location.reload();
+      resolve();
+    });
+  }
+
+  /**
+   * check if the BLUR event happens while we are
+   * hitting the submit button (in this we are gonna
+   * cancel it)
+   * ________________________________________________________________
+   */
   isBlurOnSubmit(ev)
   {
     if (
@@ -398,6 +493,11 @@ class RecipeJS
     return false;
   }
 
+  /**
+   * read data attributes from target node
+   * and relatedTarget
+   * ________________________________________________________________
+   */
   readData(ev)
   {
     let result = {};
@@ -427,6 +527,10 @@ class RecipeJS
     return result;
   }
 
+  /**
+   * read form data from target
+   * ________________________________________________________________
+   */
   readForm(ev)
   {
     let result = {};
@@ -442,6 +546,11 @@ class RecipeJS
     return result;
   }
 
+  /**
+   *
+   * log variables when logging is on
+   * ________________________________________________________________
+   */
   log(...vars)
   {
     if (this.logging == true)

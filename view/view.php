@@ -36,10 +36,13 @@ class view
   public function drawDayHeadline(int $stamp)
   {
     $rcp = new RecipeJS();
-
+/*
     $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
     $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp));
     $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
+    */
+
+    $rcp->reload();
 
     $rcp->drop();
   }
@@ -71,17 +74,18 @@ class view
    * draw everythig that happens when a new user has been added / removes / changed
    * ________________________________________________________________
    */
-  public function drawUserChanged(array $data, int $dateStamp, int $code = 0, string $msg = '')
+  public function drawUserChanged(array $data, int $stamp, int $code = 0, string $msg = '')
   {
     $rcp = new RecipeJS();
 
-    $rcp->cssHide('.dateCard__headline__'.$dateStamp, 'fadeOut', 'fadeIn', true);
-    $rcp->domReplaceInner('.dateCard__headline__'.$dateStamp, $this->renderDayHeadlineInner($dateStamp, $code, $msg));
-    $rcp->cssShow('.dateCard__headline__'.$dateStamp, 'fadeOut', 'fadeIn', true);
+    $rcp->domReplace('.dateCard__users__'.$stamp, $this->renderDay($data, $stamp));
+    $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
+    $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp, $code, $msg));
+    $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
 
     $rcp->eventRcp([
       'route' => 'index.php?op=refreshHeadline',
-      'rcpStamp' => $dateStamp
+      'rcpStamp' => $stamp
     ], 2000);
 
     $rcp->drop();
@@ -112,6 +116,10 @@ class view
     return $str;
   }
 
+  /**
+   * render inside of headline
+   * ________________________________________________________________
+   */
   protected function renderDayHeadlineInner(int $stamp, int $code = 0, string $msg = '')
   {
     if (($code === 0) && ($msg == ''))
