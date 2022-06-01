@@ -1,12 +1,18 @@
 <?php
 
+/**
+ * RecipeJS - your final JavaSript Library
+ * __________________________________________________________________
+ */
+
 class RecipeJS
 {
   protected $out = [];
 
   public function domReplace(string $target, string $html): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'dom',
       'method' => 'replace',
       'target' => $target,
@@ -16,7 +22,8 @@ class RecipeJS
 
   public function domReplaceInner(string $target, string $html): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'dom',
       'method' => 'replaceInner',
       'target' => $target,
@@ -26,7 +33,8 @@ class RecipeJS
 
   public function focusFocus(string $target): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'focus',
       'method' => 'focus',
       'target' => $target
@@ -35,7 +43,8 @@ class RecipeJS
 
   public function focusBlur(string $target): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'focus',
       'method' => 'blur',
       'target' => $target
@@ -44,7 +53,8 @@ class RecipeJS
 
   public function cssAddClass(string $target, array $classes): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'addClass',
       'target' => $target,
@@ -54,7 +64,8 @@ class RecipeJS
 
   public function cssRemoveClass(string $target, array $classes): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'removeClass',
       'target' => $target,
@@ -64,7 +75,8 @@ class RecipeJS
 
   public function cssToggleClass(string $target, array $classes): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'toggleClass',
       'target' => $target,
@@ -74,7 +86,8 @@ class RecipeJS
 
   public function cssReplaceClass(string $target, string $oldName, string $newName): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'addClass',
       'target' => $target,
@@ -85,7 +98,8 @@ class RecipeJS
 
   public function cssHide(string $target, string $hideClass, string $showClass, bool $await = false): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'hide',
       'target' => $target,
@@ -97,7 +111,8 @@ class RecipeJS
 
   public function cssShow(string $target, string $hideClass, string $showClass, bool $await = false): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'css',
       'method' => 'show',
       'target' => $target,
@@ -109,7 +124,8 @@ class RecipeJS
 
   public function eventRcp(array $detail, int $timeout): void
   {
-    array_push($this->out, [
+    $this->addOutput(
+    [
       'action' => 'event',
       'type' => 'rcp',
       'detail' => $detail,
@@ -119,7 +135,7 @@ class RecipeJS
 
   public function errorConsole(string $msg): void
   {
-    array_push($this->out,
+    $this->addOutput(
     [
       'action' => 'error',
       'method' => 'console',
@@ -129,7 +145,7 @@ class RecipeJS
 
   public function nop(): void
   {
-    array_push($this->out,
+    $this->addOutput(
     [
       'action' => 'nop'
     ]);
@@ -137,7 +153,7 @@ class RecipeJS
 
   public function reload(): void
   {
-    array_push($this->out,
+    $this->addOutput(
     [
       'action' => 'reload'
     ]);
@@ -146,6 +162,11 @@ class RecipeJS
   public function drop(): void
   {
     echo json_encode($this->out);
+  }
+
+  protected function addOutput($data): void
+  {
+    array_push($this->out, $data);
   }
 
 }
