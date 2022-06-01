@@ -14,7 +14,7 @@ class RecipeJS
    */
   constructor()
   {
-    this.events = ['click', 'change', 'blur', 'focus', 'submit', 'rcp'];
+    this.events = ['click', 'dblclick', 'change', 'select', 'blur', 'focus', 'submit', 'rcp', 'contextmenu'];
     this.handler = this.handleEvents.bind(this);
     this.logging = true;
 
@@ -102,23 +102,24 @@ class RecipeJS
   }
 
   /**
-   * Executor function
+   * Exec function
    * Is called whenever a registered event happens.
    *
-   * AWAIT waits for the "request" to finish, but as the function
-   * is called multiple times when multiple events happen at the
-   * same time it doesn't wait for the requests to return "in order".
+   * AWAIT waits for the request function to finish, but as the function
+   * is called multiple times when multiple events happen at more
+   * or less the same time, it doesn't wait for the requests to return "in order".
    *
-   * That's why we use the request counter.
-   * Whenever we issue a request, the request counter goes up
-   * Whenever a request returns, the request counter goes down.
-   * When all "concurrent" requests have returned, the request counter
-   * should be zero again. All requests are  assigned a reuest number (reqNo)
+   * All requests are  assigned a reuest number (reqNo)
    * and the result for each request is stored in the requestQueue with
    * the request number as index (see the "request" function).
    *
-   * Once all requests have settled down we can start cooking the recipes
-   * in the order of how the events happened.
+   * Whenever we issue a request, request counter goes up.
+   * Whenever a request returns, the request counter goes down.
+   * When all "concurrent" requests have returned, the request counter
+   * should be zero again.
+   *
+   * Once all requests have settled down, we can start cooking the recipes
+   * in order of how the events happened.
    * ________________________________________________________________
    *
    */

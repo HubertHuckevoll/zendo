@@ -36,13 +36,10 @@ class view
   public function drawDayHeadline(int $stamp)
   {
     $rcp = new RecipeJS();
-/*
+
     $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
     $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp));
     $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
-    */
-
-    $rcp->reload();
 
     $rcp->drop();
   }
