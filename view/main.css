@@ -3,14 +3,21 @@
   font-size: small;
 }
 
-.dateCard__message--success
+.dateCard__headline--raised
 {
-  color: green;
+  color: aquamarine;
 }
 
-.dateCard__message--error
+.fadeOut
 {
-  color: red;
+  transition: opacity .3s;
+  opacity: 0;
+}
+
+.fadeIn
+{
+  transition: opacity .3s;
+  opacity: 1;
 }
 
 footer

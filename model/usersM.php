@@ -2,36 +2,49 @@
 
   class usersM
   {
-    public $data = array();
+    public $data = [];
     public $fname = './data/zendo.json';
     const ERR_NOT_CHANGED = 1;
     const ERR_DUPLICATE = 2;
     const ERR_DAY_INACTIVE = 3;
     const ERR_NOT_SAVED = 4;
 
-    public function load()
+    /**
+     * load the file
+     * ______________________________________________________________
+     */
+    public function load(): void
     {
-      $data = @file_get_contents($this->fname);
-      if ($data !== false)
+      $fc = @file_get_contents($this->fname);
+      if ($fc !== false)
       {
-        $this->data = json_decode($data, true);
+        $this->data['content'] = json_decode($fc, true);
+        $this->data['hash'] = md5($fc);
       }
     }
 
+    /**
+     * return current data
+     * ______________________________________________________________
+     */
     public function get(): array
     {
       return $this->data;
     }
 
-    public function update(int $stamp, int $idx, string $userName)
+    /**
+     * update our data / user
+     * ______________________________________________________________
+     */
+    public function update(int $stamp, int $idx, string $userName): void
     {
-      if (!$this->data[$stamp]['options']['hidden'])
+      if (!$this->isHidden($stamp))
       {
-        if ($this->data[$stamp]['users'][$idx] != $userName)
+        if ($this->getUser($stamp, $idx) != $userName)
         {
           if (!$this->isUserAlreadyIn($stamp, $userName))
           {
-            $this->data[$stamp]['users'][$idx] = $userName;
+            $this->setUser($stamp, $idx, $userName);
           }
           else
           {
@@ -49,65 +62,155 @@
       }
     }
 
-    public function updateOption(int $stamp, string $option, bool $val)
+    /**
+     * set day to enabled / disabled
+     * ______________________________________________________________
+     */
+    public function updateOption(int $stamp, string $option, bool $val): void
     {
-      $this->data[$stamp]['options'][$option] = $val;
+      $this->data['content'][$stamp]['options'][$option] = $val;
     }
 
-    public function save(): string
+    /**
+     * save file
+     * ______________________________________________________________
+     */
+    public function save(string $hash): string
     {
-      if ($this->data !== false)
+      if ($this->data['content'] !== false)
       {
-        $this->cleanUp();
-
-        $data = json_encode($this->data, JSON_PRETTY_PRINT);
-
-        if (@file_put_contents($this->fname, $data, LOCK_EX) !== false)
+        $fc = @file_get_contents($this->fname);
+        if ($fc !== false)
         {
-          return 'Gespeichert.';
+          if (md5($fc) == $hash)
+          {
+            $this->cleanUp();
+            $fc = json_encode($this->data['content'], JSON_PRETTY_PRINT);
+            $newHash = md5($fc);
+            if (@file_put_contents($this->fname, $fc, LOCK_EX) !== false)
+            {
+              $this->data['hash'] = $newHash;
+              return 'Gespeichert.';
+            }
+          }
         }
       }
 
       throw new Exception('Speichern fehlgeschlagen.', self::ERR_NOT_SAVED);
     }
 
-    protected function cleanUp()
+    /**
+     * get index to focus
+     * ______________________________________________________________
+     */
+    public function getIdxForFocus(int $stamp): int
+    {
+      if (isset($this->data['content'][$stamp]['users']))
+      {
+        $rawNum = count($this->data['content'][$stamp]['users']);
+        return $rawNum;
+      }
+
+      return 0;
+    }
+
+    /**
+     * clean up
+     * ______________________________________________________________
+     */
+    protected function cleanUp(): void
     {
       $date = new DateTime('today');
       $treshold = $date->getTimestamp();
 
-      foreach($this->data as $stamp => $val)
+      foreach($this->data['content'] as $stamp => $val)
       {
         if ((int) $stamp < (int) $treshold)
         {
-          unset($this->data[$stamp]);
+          unset($this->data['content'][$stamp]);
+        }
+        elseif (
+                (isset($this->data['content'][$stamp]['users'])) &&
+                (count($this->data['content'][$stamp]['users']) === 0)
+               )
+        {
+          unset($this->data['content'][$stamp]);
         }
         else
         {
-          for ($i=0; $i < count($this->data[$stamp]['users']); $i++)
+          if (isset($this->data['content'][$stamp]['users']))
           {
-            if ((trim($this->data[$stamp]['users'][$i])) == '')
+            for ($i=0; $i < count($this->data['content'][$stamp]['users']); $i++)
             {
-              unset($this->data[$stamp]['users'][$i]);
+              if (trim($this->getUser($stamp, $i)) == '')
+              {
+                unset($this->data['content'][$stamp]['users'][$i]);
+              }
             }
+            array_filter($this->data['content'][$stamp]['users']); // remove empty elements
+            $this->data['content'][$stamp]['users'] = array_values($this->data['content'][$stamp]['users']); // make sure we are just numeric
           }
-          array_filter($this->data[$stamp]['users']); // remove empty elements
-          $this->data[$stamp]['users'] = array_values($this->data[$stamp]['users']); // make sure we are just numeric
         }
       }
 
-      ksort($this->data); // sort the whole thing by timestamp
+      ksort($this->data['content']); // sort the whole thing by timestamp
     }
 
-    protected function isUserAlreadyIn($stamp, $user)
+    /**
+     * is day hidden?
+     * ______________________________________________________________
+     */
+    protected function isHidden($dateStamp): bool
+    {
+      if (isset($this->data['content'][$dateStamp]['options']['hidden']))
+      {
+        if ($this->data['content'][$dateStamp]['options']['hidden'] == true)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /**
+     * get user
+     * ______________________________________________________________
+     */
+    protected function getUser($dateStamp, $i): string
+    {
+      if (isset($this->data['content'][$dateStamp]['users'][$i]))
+      {
+        return $this->data['content'][$dateStamp]['users'][$i];
+      };
+
+      return '';
+    }
+
+    /**
+     * set user
+     * ______________________________________________________________
+     */
+    protected function setUser($dateStamp, $i, $userName): void
+    {
+      $this->data['content'][$dateStamp]['users'][$i] = $userName;
+    }
+
+    /**
+     * check if user is already in
+     * ______________________________________________________________
+     */
+    protected function isUserAlreadyIn($stamp, $user): bool
     {
       if ($user != '')
       {
-        for ($i=0; $i < count($this->data[$stamp]['users']); $i++)
+        if (isset($this->data['content'][$stamp]['users']))
         {
-          if ($this->data[$stamp]['users'][$i] == $user)
+          for ($i=0; $i < count((array) $this->data['content'][$stamp]['users']); $i++)
           {
-            return true;
+            if ($this->data['content'][$stamp]['users'][$i] == $user)
+            {
+              return true;
+            }
           }
         }
       }

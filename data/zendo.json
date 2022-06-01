@@ -1,29 +1,83 @@
 {
-    "1652306400": {
+    "1654120800": {
+        "options": {
+            "hidden": false
+        },
         "users": [
-            "Konstantin",
-            "Birgit",
-            "Alexander",
-            "Frank"
+            "Michael",
+            "Jermaine",
+            "Janet",
+            "Zendonnerstag!"
         ]
     },
-    "1652911200": {
+    "1654725600": {
         "users": [
-            "Frank",
-            "Thomaas",
-            "N26",
-            "Bank"
+            "Lucy",
+            "Weird",
+            "Queen",
+            "Bruce Lee"
+        ]
+    },
+    "1655330400": {
+        "users": [
+            "Liu",
+            "fool",
+            "Schloss"
+        ],
+        "options": {
+            "hidden": false
+        }
+    },
+    "1655935200": {
+        "users": [
+            "GEOS"
+        ]
+    },
+    "1656540000": {
+        "users": [
+            "Polizei"
+        ]
+    },
+    "1657144800": {
+        "users": [
+            "Monika"
+        ]
+    },
+    "1657749600": {
+        "users": [
+            "Mathias"
+        ]
+    },
+    "1658354400": {
+        "options": {
+            "hidden": true
+        }
+    },
+    "1658959200": {
+        "users": [
+            "Something on every day"
         ]
     },
     "1659564000": {
         "users": [
-            "Is",
-            "this",
-            "really",
-            "the",
-            "life?",
-            "fantastic",
-            "real"
+            "Arzt",
+            "Hellseherin"
+        ]
+    },
+    "1660168800": {
+        "users": [
+            "We",
+            "Lost",
+            "A",
+            "Lot",
+            "Heree",
+            "Or are we"
+        ]
+    },
+    "1660773600": {
+        "users": [
+            "Oh really",
+            "Lucy"
         ]
     }
 }
