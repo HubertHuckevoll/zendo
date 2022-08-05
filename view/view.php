@@ -252,7 +252,7 @@ class view
              Wir sitzen donnerstags von 18.30 Uhr bis ca. 20.30 Uhr in der <a href="https://goo.gl/maps/zZJsrxE17p4Pp4gU7" target="_blank">Puschkinstraße 1</a> Zazen.
              Bitte tragt Euch bei den einzelnen Donnerstagen ein.<br><br>
              Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten,
-             es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass ihr sorgsam damit umgeht.';
+             es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass Ihr sorgsam damit umgeht.';
     $erg .= '</blockquote>';
 
     return $erg;
