@@ -41,7 +41,7 @@ class view
     $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp));
     $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
 
-    $rcp->drop();
+    $rcp->send();
   }
 
   /**
@@ -64,7 +64,7 @@ class view
       $rcp->focusFocus('.dateCard__users__'.$dateStamp.' form input[type="text"]');
     }
 
-    $rcp->drop();
+    $rcp->send();
   }
 
   /**
@@ -85,7 +85,7 @@ class view
       'rcpStamp' => $stamp
     ], 2000);
 
-    $rcp->drop();
+    $rcp->send();
   }
 
   /**
@@ -98,7 +98,7 @@ class view
 
     $rcp->errorConsole($e->getMessage());
 
-    $rcp->drop();
+    $rcp->send();
   }
 
   /**

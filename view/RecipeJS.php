@@ -31,6 +31,18 @@ class RecipeJS
     ]);
   }
 
+  public function domAttr(string $target, string $attrName, string $attrVal)
+  {
+    $this->addOutput(
+    [
+      'action' => 'dom',
+      'method' => 'attr',
+      'target' => $target,
+      'attrName' => $attrName,
+      'attrVal' => $attrVal
+    ]);
+  }
+
   public function focusFocus(string $target): void
   {
     $this->addOutput(
@@ -159,7 +171,7 @@ class RecipeJS
     ]);
   }
 
-  public function drop(): void
+  public function send(): void
   {
     echo json_encode($this->out);
   }
