@@ -245,6 +245,10 @@ class RecipeJS
           case 'replaceInner':
             elem.innerHTML = rcp.html;
           break;
+
+          case 'attr':
+            elem.setAttribute(rcp.attrName, rcp.attrVal);
+          break;
         }
 
         resolve();
