@@ -4,7 +4,7 @@
   require_once('./view/view.php');
   require_once('./model/calendarM.php');
   require_once('./model/usersM.php');
-  require_once('./view/RecipeJS.php');
+  require_once('../RecipeJS/RecipeJS.php');
 
   class app
   {

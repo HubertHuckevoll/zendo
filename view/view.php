@@ -80,7 +80,7 @@ class view
     $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp, $code, $msg));
     $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
 
-    $rcp->eventRcp([
+    $rcp->eventEmitRcp([
       'route' => 'index.php?op=refreshHeadline',
       'rcpStamp' => $stamp
     ], 2000);
@@ -96,7 +96,7 @@ class view
   {
     $rcp = new RecipeJS();
 
-    $rcp->errorConsole($e->getMessage());
+    $rcp->toolLog($e->getMessage());
 
     $rcp->send();
   }
@@ -239,7 +239,8 @@ class view
       '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
       '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
       '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-      '<script src="./view/RecipeJS.js" type="text/javascript"></script>'.
+      '<script                type="module" src=./view/main.js></script>'.
+      //'<script src="./view/RecipeJS.js" type="text/javascript"></script>'.
       '</head>'.
       '<body>'.
       '<header>'.
