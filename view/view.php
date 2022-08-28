@@ -239,8 +239,7 @@ class view
       '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
       '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
       '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-      '<script                type="module" src=./view/main.js></script>'.
-      //'<script src="./view/RecipeJS.js" type="text/javascript"></script>'.
+      '<script                type="module"   src=./view/main.js></script>'.
       '</head>'.
       '<body>'.
       '<header>'.
@@ -269,7 +268,9 @@ class view
     $str .= '</main>';
     $str .= '<footer>';
     $str .= 'Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a>.<br>';
-    $str .= 'Dank an <a href="https://newcss.net/" target="_blank">new.css</a>.';
+    $str .= 'Benutzt <a href="https://newcss.net/" target="_blank">new.css</a> und ';
+    $str .= 'die Schriftart <a href="https://fonts.xz.style/serve/inter.css" target="_blank">"Inter"</a>, die von externen Servern eingebunden werden.<br>';
+    $str .= 'Kein Einsatz von "Cookies" oder ähnlichem. Euer eingetragener Name / Pseudonym wird in einer JSON-Datei auf dem Server gespeichert und mit Ablauf des Datums gelöscht. Andere Daten werden nicht erhoben und/oder gespeichert.';
     $str .= '</footer>';
     $str .= '</body></html>';
 

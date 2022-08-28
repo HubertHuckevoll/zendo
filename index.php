@@ -12,7 +12,7 @@
     public $view = null;
     public $users = null;
     public $maxUsers = 7;
-
+    public $numDays = 30; // 4 Weeks
 
     /**
      * Konstruktor
@@ -98,7 +98,7 @@
 
           default:
             $data = $this->users->get();
-            $period = $this->calendar->getDates();
+            $period = $this->calendar->getDates($this->numDays);
             $this->view->drawPage($period, $data);
           break;
         }
