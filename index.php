@@ -2,6 +2,7 @@
 
   require_once('./logger.php');
   require_once('./view/view.php');
+  require_once('./view/dsgvo.php');
   require_once('./model/calendarM.php');
   require_once('./model/usersM.php');
   require_once('../RecipeJS/RecipeJS.php');
@@ -94,6 +95,11 @@
               $code = $e->getCode();
               $this->view->drawUserChanged($data, $stamp, $code, $msg);
             }
+          break;
+
+          case 'dsgvo':
+            $v = new dsgvo();
+            $v->draw();
           break;
 
           default:
