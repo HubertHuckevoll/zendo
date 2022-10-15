@@ -1,0 +1,44 @@
+{
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "description": "Anwesenheitsvormerkung",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "ZENDOnnerstag",
+  "short_name": "ZENDOnnerstag",
+  "orientation": "portrait",
+  "scope": "/zendo/",
+  "start_url": "/zendo/index.php",
+  "id": "/zendo/index.php",
+  "categories": [],
+  "screenshots": [],
+  "icons": [
+    {
+      "src": "./assets/icons8-guru-material-filled-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "./assets/icons8-guru-material-filled-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./assets/icons8-guru-material-filled-96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "./assets/icons8-guru-material-filled-32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "./assets/icons8-guru-material-filled-16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    }
+
+  ],
+  "shortcuts": []
+}

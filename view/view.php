@@ -226,9 +226,10 @@ class view
    */
   protected function renderHeader(): string
   {
-    $erg = '<!DOCTYPE html>' .
-      '<html>' .
-      '<head>' .
+    $erg  = '';
+    $erg .= '<!DOCTYPE html>'.
+      '<html>'.
+      '<head>'.
       '<meta charset="utf-8">'.
       '<title>ZENDOnnerstag</title>'.
       '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">'.
@@ -236,6 +237,7 @@ class view
       '<meta http-equiv="cache-control" content="no-cache">'.
       '<meta http-equiv="pragma" content="no-cache">'.
       '<meta http-equiv="expires" content="0">'.
+      '<link rel="manifest" href="manifest.json">'.
       '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
       '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
       '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
