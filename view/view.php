@@ -233,7 +233,11 @@ class view
       '<meta charset="utf-8">'.
       '<title>ZENDOnnerstag</title>'.
       '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">'.
+      '<link rel="apple-touch-icon" href="./assets/icons8-guru-material-filled-192.png">'.
       '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">'.
+      '<meta name="application-name" content="ZENDOnnerstag">'.
+      '<meta name="apple-mobile-web-app-title" content="ZENDOnnerstag">'.
+      '<meta name="theme-color" content="#ffffff">'.
       '<meta http-equiv="cache-control" content="no-cache">'.
       '<meta http-equiv="pragma" content="no-cache">'.
       '<meta http-equiv="expires" content="0">'.
