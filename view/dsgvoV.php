@@ -1,6 +1,6 @@
 <?php
 
-class dsgvo
+class dsgvoV
 {
 
   /**
@@ -80,6 +80,10 @@ class dsgvo
     echo $str;
   }
 
+  /**
+   * obfuscate an email Address
+   * ________________________________________________________________
+   */
   protected function obfuscateStr($str)
   {
     $result = '';

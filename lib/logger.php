@@ -131,6 +131,7 @@ class logger
    */
   public static function drawStackHTML($callerInfo)
   {
+    $out = '';
     $i = 0;
     $last = count($callerInfo) - 1;
 

@@ -1,6 +1,6 @@
 <?php
 
-class view
+class mainV
 {
   public int $maxUsers = 10;
 
@@ -8,7 +8,7 @@ class view
    * initial page draw
    * ________________________________________________________________
    */
-  public function drawPage(DatePeriod $period, array $data)
+  public function drawPage(DatePeriod $period, array $data): void
   {
     $str  = '';
 
@@ -33,7 +33,7 @@ class view
    * draw day headline / error / success messages
    * ________________________________________________________________
    */
-  public function drawDayHeadline(int $stamp)
+  public function drawDayHeadline(int $stamp): void
   {
     $rcp = new RecipeJS();
 
@@ -68,10 +68,10 @@ class view
   }
 
   /**
-   * draw everythig that happens when a new user has been added / removes / changed
+   * draw everythig that happens when a new user has been added / removed / changed
    * ________________________________________________________________
    */
-  public function drawUserChanged(array $data, int $stamp, int $code = 0, string $msg = '')
+  public function drawUserChanged(array $data, int $stamp, int $code = 0, string $msg = ''): void
   {
     $rcp = new RecipeJS();
 
@@ -81,7 +81,7 @@ class view
     $rcp->cssShow('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
 
     $rcp->eventEmitRcp([
-      'route' => 'index.php?op=refreshHeadline',
+      'route' => '/zendo/index.php/mainC/refreshHeadline',
       'rcpStamp' => $stamp
     ], 2000);
 
@@ -92,7 +92,7 @@ class view
    * draw fatal error
    * ________________________________________________________________
    */
-  public function drawFatalError($e)
+  public function drawFatalError(Exception $e): void
   {
     $rcp = new RecipeJS();
 
@@ -105,7 +105,7 @@ class view
    * render headline
    * ________________________________________________________________
    */
-  protected function renderDayHeadline(int $stamp, int $code = 0, string $msg = '')
+  protected function renderDayHeadline(int $stamp, int $code = 0, string $msg = ''): string
   {
     $str = '';
     $str = '<h4 class="dateCard__headline__'.$stamp.'">'.$this->renderDayHeadlineInner($stamp, $code, $msg).'</h4>';
@@ -117,7 +117,7 @@ class view
    * render inside of headline
    * ________________________________________________________________
    */
-  protected function renderDayHeadlineInner(int $stamp, int $code = 0, string $msg = '')
+  protected function renderDayHeadlineInner(int $stamp, int $code = 0, string $msg = ''): string
   {
     if (($code === 0) && ($msg == ''))
     {
@@ -146,12 +146,12 @@ class view
         $str .= '<li>';
         if ($idx === $i)
         {
-          $str .= '<form action="index.php?op=updateUser">';
+          $str .= '<form action="/zendo/index.php/mainC/updateUser">';
           $str .= '<input name="rcpIdx"   type="hidden" value="'.$i.'">';
           $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
           $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
           $str .= '<input name="rcpUser"
-                          data-rcp-blur="index.php?op=refreshDay"
+                          data-rcp-blur="/zendo/index.php/mainC/refreshDay"
                           data-rcp-stamp="'.$dateStamp.'"
                           data-rcp-idx="'.$i.'"
                           data-rcp-hash="'.$data['hash'].'"
@@ -166,7 +166,7 @@ class view
         else
         {
           $str .= '<input class="dateCard__userInput"
-                          data-rcp-focus="index.php?op=userForm"
+                          data-rcp-focus="/zendo/index.php/mainC/userForm"
                           name="rcpInput"
                           data-rcp-idx="'.$i.'"
                           data-rcp-stamp="'.$dateStamp.'"
@@ -184,13 +184,13 @@ class view
       // "0" as int means we received this from the users end, "null" means we just render a default value
       if ($idx === 0)
       {
-        $str .= '<form action="index.php?op=updateUser">';
+        $str .= '<form action="/zendo/index.php/mainC/updateUser">';
         $str .= '<input name="rcpIdx"   type="hidden" value="0">';
         $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
         $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
         $str .= '<input name="rcpUser"
                         type="text"
-                        data-rcp-blur="index.php?op=refreshDay"
+                        data-rcp-blur="/zendo/index.php/mainC/refreshDay"
                         data-rcp-stamp="'.$dateStamp.'"
                         data-rcp-hash="'.$data['hash'].'"
                         value="Entfällt.">';
@@ -202,7 +202,7 @@ class view
       { // $idx === null
 
         $str .= '<input class="dateCard__userInput"
-                        data-rcp-focus="index.php?op=userForm"
+                        data-rcp-focus="/zendo/index.php/mainC/userForm"
                         name="rcpInput"
                         data-rcp-idx="0"
                         data-rcp-stamp="'.$dateStamp.'"
@@ -244,8 +244,8 @@ class view
       '<link rel="manifest" href="manifest.json">'.
       '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
       '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
-      '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
-      '<script                type="module"   src=./view/main.js></script>'.
+      '<link rel="stylesheet" type="text/css" href="/zendo/view/main.css">'.
+      '<script                type="module"   src="/zendo/view/main.js"></script>'.
       '</head>'.
       '<body>'.
       '<header>'.
@@ -277,7 +277,7 @@ class view
     $str .= 'Benutzt <a href="https://newcss.net/" target="_blank">new.css</a> und ';
     $str .= 'die Schriftart <a href="https://fonts.xz.style/serve/inter.css" target="_blank">"Inter"</a>, die von externen Servern eingebunden werden.<br>';
     $str .= 'Euer eingetragener Name / Pseudonym wird in einer JSON-Datei auf dem Server gespeichert und mit Ablauf des Datums gelöscht.<br>';
-    $str .= '<a href="index.php?op=dsgvo" target="_blank">DSGVO und Impressum</a>.';
+    $str .= '<a href="/zendo/index.php/dsgvoC/index" target="_blank">DSGVO und Impressum</a>.';
     $str .= '</footer>';
     $str .= '</body>';
     $str .= '</html>';
