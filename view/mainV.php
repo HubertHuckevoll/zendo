@@ -242,8 +242,7 @@ class mainV
       '<meta http-equiv="pragma" content="no-cache">'.
       '<meta http-equiv="expires" content="0">'.
       '<link rel="manifest" href="manifest.json">'.
-      '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
-      '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
+      '<link rel="stylesheet" href="/zendo/view/new.min.css">'.
       '<link rel="stylesheet" type="text/css" href="/zendo/view/main.css">'.
       '<script                type="module"   src="/zendo/view/main.js"></script>'.
       '</head>'.
@@ -273,10 +272,9 @@ class mainV
     $str  = '';
     $str .= '</main>';
     $str .= '<footer>';
-    $str .= 'Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a>.<br>';
-    $str .= 'Benutzt <a href="https://newcss.net/" target="_blank">new.css</a> und ';
-    $str .= 'die Schriftart <a href="https://fonts.xz.style/serve/inter.css" target="_blank">"Inter"</a>, die von externen Servern eingebunden werden.<br>';
-    $str .= 'Euer eingetragener Name / Pseudonym wird in einer JSON-Datei auf dem Server gespeichert und mit Ablauf des Datums gelöscht.<br>';
+    $str .= 'Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a>.&nbsp;';
+    $str .= 'Dank an <a href="https://newcss.net/" target="_blank">new.css</a>.<br>';
+    $str .= 'Euer eingetragener Name / Pseudonym wird in einer JSON-Datei auf dem Server gespeichert und mit Ablauf des Datums gelöscht.&nbsp;';
     $str .= '<a href="/zendo/index.php/dsgvoC/index" target="_blank">DSGVO und Impressum</a>.';
     $str .= '</footer>';
     $str .= '</body>';

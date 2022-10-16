@@ -23,7 +23,7 @@ class dsgvoV
            '<meta http-equiv="expires" content="0">'.
            '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">'.
            '<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">'.
-           '<link rel="stylesheet" type="text/css" href="./view/main.css">'.
+           '<link rel="stylesheet" type="text/css" href="/zendo/view/main.css">'.
            '</head>'.
            '<body>'.
 
