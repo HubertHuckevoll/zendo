@@ -1,9 +1,8 @@
 <?php
 
-  class mainC extends pController
+  class mainC extends cPageC
   {
     public $calendar = null;
-    public $view = null;
     public $users = null;
     public $maxUsers = 7;
     public $numDays = 30; // 4 Weeks
@@ -15,7 +14,7 @@
     public function __construct()
     {
       $this->calendar = new calendarM();
-      $this->view = new mainV();
+      $this->view = new mainV('mainV');
       $this->users = new usersM();
 
       $this->view->maxUsers = $this->maxUsers;
@@ -249,6 +248,16 @@
       }
 
       throw new Exception('Kein gültiger Hash.');
+    }
+
+    /**
+     * fetch raw JSON input
+     * ______________________________________________________________
+     */
+    protected function getJsonInput()
+    {
+      $input = json_decode(file_get_contents('php://input'), true);
+      return $input;
     }
 
   }

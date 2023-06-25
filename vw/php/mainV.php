@@ -1,6 +1,6 @@
 <?php
 
-class mainV
+class mainV extends cAppV
 {
   public int $maxUsers = 10;
 
@@ -12,8 +12,6 @@ class mainV
   {
     $str  = '';
 
-    $str .= $this->renderHeader();
-
     foreach ($period as $date)
     {
       $dateStamp = $date->getTimestamp();
@@ -24,9 +22,8 @@ class mainV
       $str .= '</div>'; // dateCard
     }
 
-    $str .= $this->renderFooter();
-
-    echo $str;
+    $this->setTag('content', $str);
+    $this->draw();
   }
 
   /**
@@ -35,7 +32,7 @@ class mainV
    */
   public function drawDayHeadline(int $stamp): void
   {
-    $rcp = new RecipeJS();
+    $rcp = new RecipeV();
 
     $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
     $rcp->domReplaceInner('.dateCard__headline__'.$stamp, $this->renderDayHeadlineInner($stamp));
@@ -50,7 +47,7 @@ class mainV
    */
   public function drawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
   {
-    $rcp = new RecipeJS();
+    $rcp = new RecipeV();
 
     if (($oldStamp !== null) && ($oldStamp != $dateStamp))
     {
@@ -73,7 +70,7 @@ class mainV
    */
   public function drawUserChanged(array $data, int $stamp, int $code = 0, string $msg = ''): void
   {
-    $rcp = new RecipeJS();
+    $rcp = new RecipeV();
 
     $rcp->domReplace('.dateCard__users__'.$stamp, $this->renderDay($data, $stamp));
     $rcp->cssHide('.dateCard__headline__'.$stamp, 'fadeOut', 'fadeIn', true);
@@ -94,7 +91,7 @@ class mainV
    */
   public function drawFatalError(Exception $e): void
   {
-    $rcp = new RecipeJS();
+    $rcp = new RecipeV();
 
     $rcp->toolLog($e->getMessage());
 
@@ -216,69 +213,6 @@ class mainV
 
     $str .= '</ul>';
     $str .= '</div>'; // dateCard__users
-
-    return $str;
-  }
-
-  /**
-   * render page header
-   * ________________________________________________________________
-   */
-  protected function renderHeader(): string
-  {
-    $erg  = '';
-    $erg .= '<!DOCTYPE html>'.
-      '<html>'.
-      '<head>'.
-      '<meta charset="utf-8">'.
-      '<title>ZENDOnnerstag</title>'.
-      '<link rel="shortcut icon" href="./assets/icons8-guru-material-filled-96.png" type="image/png">'.
-      '<link rel="apple-touch-icon" href="./assets/icons8-guru-material-filled-192.png">'.
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">'.
-      '<meta name="application-name" content="ZENDOnnerstag">'.
-      '<meta name="apple-mobile-web-app-title" content="ZENDOnnerstag">'.
-      '<meta name="theme-color" content="#ffffff">'.
-      '<meta http-equiv="cache-control" content="no-cache">'.
-      '<meta http-equiv="pragma" content="no-cache">'.
-      '<meta http-equiv="expires" content="0">'.
-      '<link rel="manifest" href="manifest.json">'.
-      '<link rel="stylesheet" href="/zendo/view/new.min.css">'.
-      '<link rel="stylesheet" type="text/css" href="/zendo/view/main.css">'.
-      '<script                type="module"   src="/zendo/view/main.js"></script>'.
-      '</head>'.
-      '<body>'.
-      '<header>'.
-      '<h1 class="mainHeadline">ZENDO<span class="mainHeadline__second">nnerstag</span></h1>'.
-      '</header>';
-
-    $erg .= '<main>';
-    $erg .= '<blockquote>';
-    $erg .= 'Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>.
-             Wir sitzen donnerstags von 18.30 Uhr bis ca. 20.30 Uhr in der <a href="https://goo.gl/maps/zZJsrxE17p4Pp4gU7" target="_blank">Puschkinstraße 1</a> Zazen.
-             Bitte tragt Euch bei den einzelnen Donnerstagen ein.<br><br>
-             Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten,
-             es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass Ihr sorgsam damit umgeht.';
-    $erg .= '</blockquote>';
-
-    return $erg;
-  }
-
-  /**
-   * render page footer
-   * ________________________________________________________________
-   */
-  protected function renderFooter(): string
-  {
-    $str  = '';
-    $str .= '</main>';
-    $str .= '<footer>';
-    $str .= 'Konstantin Meyer [2022/4+] für <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">Lebendiges Zen Erfurt</a>.&nbsp;';
-    $str .= 'Dank an <a href="https://newcss.net/" target="_blank">new.css</a>.<br>';
-    $str .= 'Euer eingetragener Name / Pseudonym wird in einer JSON-Datei auf dem Server gespeichert und mit Ablauf des Datums gelöscht.&nbsp;';
-    $str .= '<a href="/zendo/index.php/dsgvoC/index" target="_blank">DSGVO und Impressum</a>.';
-    $str .= '</footer>';
-    $str .= '</body>';
-    $str .= '</html>';
 
     return $str;
   }

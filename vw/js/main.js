@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () =>
   // but this way we gain some PWA capabilities
   if ('serviceWorker' in navigator)
   {
-    navigator.serviceWorker.register('./sw.js');
+    navigator.serviceWorker.register('./view/js/sw.js');
   }
 
   let app = new RecipeJS();

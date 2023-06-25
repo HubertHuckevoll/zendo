@@ -12,19 +12,19 @@
     switch($ct)
     {
       case 'V':
-        $fname = '.'.DIRECTORY_SEPARATOR.'view'.DIRECTORY_SEPARATOR.$className.'.php';
+        $fname = './vw/php/'.$className.'.php';
       break;
 
       case 'M':
-        $fname = '.'.DIRECTORY_SEPARATOR.'model'.DIRECTORY_SEPARATOR.$className.'.php';
+        $fname = './md/'.$className.'.php';
       break;
 
       case 'C':
-        $fname = '.'.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.$className.'.php';
+        $fname = './ct/'.$className.'.php';
       break;
 
       default:
-        $fname = '.'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$className.'.php';
+        $fname = './lb/'.$className.'.php';
       break;
     }
 
