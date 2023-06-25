@@ -1,12 +1,16 @@
 <?php
 
-  class dsgvoC extends pController
+class dsgvoC extends cPageC
+{
+  public function __construct()
   {
-    public function index(): void
-    {
-      $v = new dsgvoV();
-      $v->draw();
-    }
+    $this->view = new dsgvoV('dsgvoV');
   }
+
+  public function show(): void
+  {
+    $this->view->drawPage();
+  }
+}
 
 ?>
