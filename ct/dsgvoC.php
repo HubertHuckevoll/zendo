@@ -2,9 +2,10 @@
 
 class dsgvoC extends cPageC
 {
-  public function __construct()
+  public function __construct(array $request, ?array $prefs = null)
   {
-    $this->view = new dsgvoV('dsgvoV');
+    $view = new dsgvoV('dsgvoV');
+    parent::__construct($request, $view, $prefs);
   }
 
   public function show(): void

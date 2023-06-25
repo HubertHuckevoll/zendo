@@ -11,13 +11,15 @@
      * Konstruktor
      * ______________________________________________________________
      */
-    public function __construct()
+    public function __construct(array $request, ?array $prefs = null)
     {
-      $this->calendar = new calendarM();
-      $this->view = new mainV('mainV');
-      $this->users = new usersM();
+      $view = new mainV('mainV');
+      parent::__construct($request, $view, $prefs);
 
+      $this->calendar = new calendarM();
+      $this->users = new usersM();
       $this->view->maxUsers = $this->maxUsers;
+
       $this->users->load();
     }
 
@@ -142,8 +144,7 @@
      */
     protected function getTimestamp(): int
     {
-      $inp = $this->getJsonInput();
-      $inp = $inp['target'];
+      $inp = $this->request['target'];
 
       if (isset($inp['rcpStamp']))
       {
@@ -164,11 +165,9 @@
      */
     protected function getRelatedTimestamp(): int|null
     {
-      $inp = $this->getJsonInput();
-
-      if (isset($inp['relatedTarget']))
+      if (isset($this->request['relatedTarget']))
       {
-        $inp = $inp['relatedTarget'];
+        $inp = $this->request['relatedTarget'];
         if (isset($inp['rcpStamp']))
         {
           $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
@@ -188,8 +187,7 @@
      */
     protected function getIdx(): int
     {
-      $inp = $this->getJsonInput();
-      $inp = $inp['target'];
+      $inp = $this->request['target'];
 
       if (isset($inp['rcpIdx']))
       {
@@ -212,8 +210,7 @@
     {
       $matches = [];
       $ret = '';
-      $inp = $this->getJsonInput();
-      $inp = $inp['target'];
+      $inp = $this->request['target'];
 
       if (isset($inp['rcpUser']))
       {
@@ -240,8 +237,7 @@
      */
     public function getHash(): string
     {
-      $inp = $this->getJsonInput();
-      $inp = $inp['target'];
+      $inp = $this->request['target'];
       if (isset($inp['rcpHash']))
       {
         return $inp['rcpHash'];
@@ -249,17 +245,6 @@
 
       throw new Exception('Kein gültiger Hash.');
     }
-
-    /**
-     * fetch raw JSON input
-     * ______________________________________________________________
-     */
-    protected function getJsonInput()
-    {
-      $input = json_decode(file_get_contents('php://input'), true);
-      return $input;
-    }
-
   }
 
 ?>
