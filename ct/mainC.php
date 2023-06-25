@@ -33,11 +33,11 @@
         $stamp = $this->getTimestamp();
         $idx = $this->getIdx();
         $data = $this->users->get();
-        $this->view->drawDay($data, $oldStamp, $stamp, $idx);
+        $this->view->ajaxDrawDay($data, $oldStamp, $stamp, $idx);
       }
       catch (Exception $e)
       {
-        $this->view->drawFatalError($e);
+        $this->view->ajaxDrawFatalError($e);
       }
     }
 
@@ -52,11 +52,11 @@
         $oldStamp = $this->getRelatedTimestamp();
         $stamp = $this->getTimestamp();
         $data = $this->users->get();
-        $this->view->drawDay($data, $oldStamp, $stamp);
+        $this->view->ajaxDrawDay($data, $oldStamp, $stamp);
       }
       catch(Exception $e)
       {
-        $this->view->drawFatalError($e);
+        $this->view->ajaxDrawFatalError($e);
       }
     }
 
@@ -69,11 +69,11 @@
       try
       {
         $stamp = $this->getTimestamp();
-        $this->view->drawDayHeadline($stamp);
+        $this->view->ajaxDrawDayHeadline($stamp);
       }
       catch(Exception $e)
       {
-        $this->view->drawFatalError($e);
+        $this->view->ajaxDrawFatalError($e);
       }
     }
 
@@ -107,14 +107,14 @@
 
         $msg = $this->users->save($hash);
         $data = $this->users->get();
-        $this->view->drawUserChanged($data, $stamp, 0, $msg);
+        $this->view->ajaxDrawUserChanged($data, $stamp, 0, $msg);
       }
       catch(Exception $e)
       {
         $data = $this->users->get();
         $msg = $e->getMessage();
         $code = $e->getCode();
-        $this->view->drawUserChanged($data, $stamp, $code, $msg);
+        $this->view->ajaxDrawUserChanged($data, $stamp, $code, $msg);
       }
     }
 
@@ -132,7 +132,7 @@
       }
       catch(Exception $e)
       {
-        $this->view->drawFatalError($e);
+        $this->view->ajaxDrawFatalError($e);
       }
     }
 

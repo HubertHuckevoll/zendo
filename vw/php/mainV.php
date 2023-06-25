@@ -30,7 +30,7 @@ class mainV extends cAppV
    * draw day headline / error / success messages
    * ________________________________________________________________
    */
-  public function drawDayHeadline(int $stamp): void
+  public function ajaxDrawDayHeadline(int $stamp): void
   {
     $rcp = new RecipeV();
 
@@ -45,7 +45,7 @@ class mainV extends cAppV
    * draw users for a day
    * ________________________________________________________________
    */
-  public function drawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
+  public function ajaxDrawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
   {
     $rcp = new RecipeV();
 
@@ -68,7 +68,7 @@ class mainV extends cAppV
    * draw everythig that happens when a new user has been added / removed / changed
    * ________________________________________________________________
    */
-  public function drawUserChanged(array $data, int $stamp, int $code = 0, string $msg = ''): void
+  public function ajaxDrawUserChanged(array $data, int $stamp, int $code = 0, string $msg = ''): void
   {
     $rcp = new RecipeV();
 
@@ -89,7 +89,7 @@ class mainV extends cAppV
    * draw fatal error
    * ________________________________________________________________
    */
-  public function drawFatalError(Exception $e): void
+  public function ajaxDrawFatalError(Exception $e): void
   {
     $rcp = new RecipeV();
 
