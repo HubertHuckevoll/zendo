@@ -14,7 +14,7 @@
     public function __construct(array $request, ?array $prefs = null)
     {
       $view = new mainV('mainV');
-      parent::__construct($request, $view, $prefs);
+      parent::__construct($request, $prefs, $view);
 
       $this->calendar = new calendarM();
       $this->users = new usersM();
