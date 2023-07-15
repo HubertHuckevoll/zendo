@@ -1,12 +1,12 @@
-import { RecipeJS } from '/RecipeJS/RecipeJS.js';
+import { RecipeJS } from '/coins/heads/js/recipe/RecipeJS.js';
 
 document.addEventListener('DOMContentLoaded', () =>
 {
-  // install our service worker - we are basically an "online only" app,
-  // but this way we gain some PWA capabilities
+  // Install our dummy service worker - we are basically an "online only" app.
+  // But using a service worker we gain some PWA capabilities
   if ('serviceWorker' in navigator)
   {
-    navigator.serviceWorker.register('./view/js/sw.js');
+    navigator.serviceWorker.register('./swDummy.js');
   }
 
   let app = new RecipeJS();
