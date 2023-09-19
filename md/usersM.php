@@ -2,12 +2,21 @@
 
   class usersM
   {
-    public $data = [];
-    public $fname = './data/zendo.json';
+    public array $data = [];
+    public string $fname = '';
     const ERR_NOT_CHANGED = 1;
     const ERR_DUPLICATE = 2;
     const ERR_DAY_INACTIVE = 3;
     const ERR_NOT_SAVED = 4;
+
+    /**
+     * Konstruktor
+     * ______________________________________________________________
+     */
+    public function __construct()
+    {
+      $this->fname = $_SERVER['DOCUMENT_ROOT'].'/zendo.datastore/zendo.json';
+    }
 
     /**
      * load the file

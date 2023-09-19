@@ -1,6 +1,6 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'].'/coins/loader.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/coins/tails/v1/loader.php');
 require_once('./loader.php');
 
 $pathInfoAssignCallback = function($pathInfoParts)
