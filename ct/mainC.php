@@ -4,6 +4,7 @@
   {
     public $calendar = null;
     public $users = null;
+    public $news = null;
     public $maxUsers = 7;
     public $numDays = 30; // 4 Weeks
 
@@ -19,8 +20,10 @@
       $this->calendar = new calendarM();
       $this->users = new usersM();
       $this->view->maxUsers = $this->maxUsers;
+      $this->news = new newsM();
 
       $this->users->load();
+      $this->news->load();
     }
 
     /**
@@ -91,6 +94,7 @@
         $idx = $this->getIdx();
         $userOrCmd = $this->getUserOrCommand();
         $hash = $this->getHash();
+        $subm = $this->getSubm();
 
         switch ($userOrCmd)
         {
@@ -103,6 +107,7 @@
           break;
 
           default:
+            if ($subm == 'X') { $userOrCmd = '';}
             $this->users->update($stamp, $idx, $userOrCmd);
           break;
         }
@@ -130,7 +135,7 @@
       {
         $data = $this->users->get();
         $period = $this->calendar->getDates($this->numDays);
-        $this->view->drawPage($period, $data);
+        $this->view->drawPage($period, $data, $this->news->get());
       }
       catch(Exception $e)
       {
@@ -244,6 +249,21 @@
       }
 
       throw new Exception('Kein gültiger Hash.');
+    }
+
+    /**
+     * Get submit value: just or "OK" or "X".
+     * ______________________________________________________________
+     */
+    public function getSubm(): string
+    {
+      $inp = $this->request['target'];
+      if (isset($inp['rcpSubm']))
+      {
+        return $inp['rcpSubm'];
+      }
+
+      return '';
     }
   }
 

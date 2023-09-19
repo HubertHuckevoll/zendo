@@ -8,7 +8,7 @@ class mainV extends cAppV
    * initial page draw
    * ________________________________________________________________
    */
-  public function drawPage(DatePeriod $period, array $data): void
+  public function drawPage(DatePeriod $period, array $data, string $news): void
   {
     $str  = '';
 
@@ -22,8 +22,23 @@ class mainV extends cAppV
       $str .= '</div>'; // dateCard
     }
 
+    $this->setTag('news', $this->renderNews($news));
     $this->setTag('content', $str);
     $this->draw();
+  }
+
+  /**
+   * render News
+   * ________________________________________________________________
+   */
+  public function renderNews(string $news): string
+  {
+    if ($news !== '')
+    {
+      return '<div class="newsBox">'.htmlentities(trim($news)).'</div>';
+    }
+
+    return '';
   }
 
   /**
@@ -154,10 +169,21 @@ class mainV extends cAppV
                           data-rcp-hash="'.$data['hash'].'"
                           type="text"
                           value="'.html_entity_decode($user, ENT_QUOTES).'">';
+
           $str .= '&nbsp;';
-          $str .= '<input name="rcpSubm"
-                          type="submit"
-                          value="OK">';
+          if ($user != '')
+          {
+            $str .= '<input name="rcpSubm"
+                            type="submit"
+                            value="X">';
+          }
+          else
+          {
+            $str .= '<input name="rcpSubm"
+                            type="submit"
+                            value="OK">';
+          }
+
           $str .= '</form>';
         }
         else

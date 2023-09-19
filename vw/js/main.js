@@ -1,4 +1,4 @@
-import { RecipeJS } from '/coins/heads/js/recipe/RecipeJS.js';
+import { RecipeJS } from '/coins/heads/v1/js/recipe/RecipeJS.js';
 
 document.addEventListener('DOMContentLoaded', () =>
 {
