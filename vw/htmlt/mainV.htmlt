@@ -23,11 +23,7 @@
   </header>
   <main>
     <blockquote>
-      Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>.
-      Wir sitzen donnerstags von 18.30 Uhr bis ca. 20.30 Uhr in der <a href="https://goo.gl/maps/zZJsrxE17p4Pp4gU7" target="_blank">Puschkinstraße 1</a> Zazen.
-      Bitte tragt Euch bei den einzelnen Donnerstagen ein.<br><br>
-      Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten,
-      es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass Ihr sorgsam damit umgeht.
+      <c-intro>
       <c-news>
     </blockquote>
     <c-content>

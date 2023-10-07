@@ -12,6 +12,9 @@ class mainV extends cAppV
   {
     $str  = '';
 
+    $this->setTag('intro', $this->renderIntro());
+    $this->setTag('news', $this->renderNews($news));
+
     foreach ($period as $date)
     {
       $dateStamp = $date->getTimestamp();
@@ -22,10 +25,25 @@ class mainV extends cAppV
       $str .= '</div>'; // dateCard
     }
 
-    $this->setTag('news', $this->renderNews($news));
     $this->setTag('content', $str);
     $this->draw();
   }
+
+  /**
+   * render Intro
+   * ________________________________________________________________
+   */
+  public function renderIntro(): string
+  {
+    return 'Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>. '.
+           'Wir sitzen <strong>donnerstags von 19.15 Uhr bis ca. 20.45 Uhr</strong> in der <strong><a href="https://maps.app.goo.gl/Ba9mW17T3sjqYNqo6" target="_blank">Rosengasse 9 ("Yoga Loft")</a></strong> Zazen. '.
+           'Bitte tragt Euch bei den einzelnen Donnerstagen ein und bringt 5€ mit - der Raum wird stundenweise gemietet. '.
+           '(Wem die 5€ Schwierigkeiten bereiten, der spreche uns bitte an.)'.
+           '<br><br>'.
+           'Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten, '.
+           'es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass Ihr sorgsam damit umgeht.';
+  }
+
 
   /**
    * render News
@@ -35,7 +53,10 @@ class mainV extends cAppV
   {
     if ($news !== '')
     {
-      return '<div class="newsBox">'.htmlentities(trim($news)).'</div>';
+      return '<div class="newsBox">'.
+             '<h5>Aktuelles</h5>'.
+             trim($news).
+             '</div>';
     }
 
     return '';
