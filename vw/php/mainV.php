@@ -36,8 +36,8 @@ class mainV extends cAppV
   public function renderIntro(): string
   {
     return 'Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>. '.
-           'Wir sitzen <strong>donnerstags von 19.15 Uhr bis ca. 20.45 Uhr</strong> in der <strong><a href="https://maps.app.goo.gl/Ba9mW17T3sjqYNqo6" target="_blank">Rosengasse 9 ("Yoga Loft")</a></strong> Zazen. '.
-           'Bitte tragt Euch bei den einzelnen Donnerstagen ein und bringt 5€ mit - der Raum wird stundenweise gemietet. '.
+           'Wir sitzen <strong>donnerstags von 19.30 Uhr bis ca. 20.45 Uhr</strong> in der <strong><a href="https://maps.app.goo.gl/Ba9mW17T3sjqYNqo6" target="_blank">Rosengasse 9</a> ("Yoga Loft")</strong> Zazen. '.
+           'Bitte tragt Euch bei den einzelnen Donnerstagen ein, seid ca. 10 - 15 Minuten früher da und bringt 5€ mit - der Raum wird stundenweise gemietet. '.
            '(Wem die 5€ Schwierigkeiten bereiten, der spreche uns bitte an.)'.
            '<br><br>'.
            'Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten, '.
