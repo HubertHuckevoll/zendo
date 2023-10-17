@@ -5,7 +5,7 @@
     public $calendar = null;
     public $users = null;
     public $news = null;
-    public $maxUsers = 7;
+    public $maxUsers = 10;
     public $numDays = 30; // 4 Weeks
 
     /**
