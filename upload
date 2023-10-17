@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo rsync -aPR --dry-run ~/hasenbuelt/./zendo/ ~/hasenbuelt/./coins/ ftp93764-2611197@93764.webhosting35.1blu.de:~/www/
