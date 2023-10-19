@@ -118,10 +118,17 @@
       }
       catch(Exception $e)
       {
-        $data = $this->users->get();
-        $msg = $e->getMessage();
-        $code = $e->getCode();
-        $this->view->ajaxDrawUserChanged($data, $stamp, $code, $msg);
+        if (isset($stamp))
+        {
+          $data = $this->users->get();
+          $msg = $e->getMessage();
+          $code = $e->getCode();
+          $this->view->ajaxDrawUserChanged($data, $stamp, $code, $msg);
+        }
+        else
+        {
+          $this->view->ajaxDrawFatalError($e);
+        }
       }
     }
 
@@ -149,15 +156,18 @@
      */
     protected function getTimestamp(): int
     {
-      $inp = $this->request['target'];
-
-      if (isset($inp['rcpStamp']))
+      if (isset($this->request['target']))
       {
-        $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+        $inp = $this->request['target'];
 
-        if (preg_match('/[0-9]{10}/', $stamp) == true)
+        if (isset($inp['rcpStamp']))
         {
-          return $stamp;
+          $stamp = filter_var($inp['rcpStamp'], FILTER_SANITIZE_NUMBER_INT);
+
+          if (preg_match('/[0-9]{10}/', $stamp) == true)
+          {
+            return $stamp;
+          }
         }
       }
 
@@ -192,15 +202,17 @@
      */
     protected function getIdx(): int
     {
-      $inp = $this->request['target'];
-
-      if (isset($inp['rcpIdx']))
+      if (isset($this->request['target']))
       {
-        $idx = filter_var($inp['rcpIdx'], FILTER_SANITIZE_NUMBER_INT);
-
-        if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
+        $inp = $this->request['target'];
+        if (isset($inp['rcpIdx']))
         {
-          return $idx;
+          $idx = filter_var($inp['rcpIdx'], FILTER_SANITIZE_NUMBER_INT);
+
+          if (($idx >= 0) && ($idx <= ($this->maxUsers - 1)))
+          {
+            return $idx;
+          }
         }
       }
 
@@ -215,22 +227,26 @@
     {
       $matches = [];
       $ret = '';
-      $inp = $this->request['target'];
 
-      if (isset($inp['rcpUser']))
+      if (isset($this->request['target']))
       {
-        $raw = $inp['rcpUser'];
+        $inp = $this->request['target'];
 
-        if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
+        if (isset($inp['rcpUser']))
         {
-          $ret = $matches[1];
-        }
-        else
-        {
-          $ret = trim(htmlentities(strip_tags($raw), ENT_QUOTES));
-        }
+          $raw = $inp['rcpUser'];
 
-        return $ret;
+          if (preg_match('/command::([a-z]*)/', $raw, $matches) == true)
+          {
+            $ret = $matches[1];
+          }
+          else
+          {
+            $ret = trim(htmlentities(strip_tags($raw), ENT_QUOTES));
+          }
+
+          return $ret;
+        }
       }
 
       throw new Exception('Kein gültiger Nutzer / Befehl.');
@@ -242,10 +258,14 @@
      */
     public function getHash(): string
     {
-      $inp = $this->request['target'];
-      if (isset($inp['rcpHash']))
+      if (isset($this->request['target']))
       {
-        return $inp['rcpHash'];
+        $inp = $this->request['target'];
+
+        if (isset($inp['rcpHash']))
+        {
+          return $inp['rcpHash'];
+        }
       }
 
       throw new Exception('Kein gültiger Hash.');
@@ -257,10 +277,13 @@
      */
     public function getSubm(): string
     {
-      $inp = $this->request['target'];
-      if (isset($inp['rcpSubm']))
+      if (isset($this->request['target']))
       {
-        return $inp['rcpSubm'];
+        $inp = $this->request['target'];
+        if (isset($inp['rcpSubm']))
+        {
+          return $inp['rcpSubm'];
+        }
       }
 
       return '';
