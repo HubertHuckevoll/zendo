@@ -35,13 +35,19 @@ class mainV extends cAppV
    */
   public function renderIntro(): string
   {
-    return 'Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>. '.
+    return '<p>Willkommen beim Kalender der <a href="https://www.lebendiges-zen.de/zendo-erfurt/" target="_blank">"Lebendiges Zen"-Gruppe Erfurt</a>.</p>'.
+           '<p><strong class="mark">01.01.2024</strong>: Leider haben wir derzeit keinen Raum für Zazen zur Verfügung. Bis auf weiteres findet daher kein Zazen statt. Wer näheres wissen möchte '.
+           'kann uns unter <a href="mailto:erfurt@lebendiges-zen.de">erfurt@lebendiges-zen.de</a> erreichen.</p>'.
+           '<p>Die Möglichkeit zur Zazen - Meditation bietet sich in <a href="https://lebendiges-zen.de/veranstaltungen/">Göttingen</a></p>';
+
+           /*
            'Wir sitzen <strong>donnerstags von 19.30 Uhr bis ca. 20.45 Uhr</strong> in der <strong><a href="https://maps.app.goo.gl/Ba9mW17T3sjqYNqo6" target="_blank">Rosengasse 9</a> ("Yoga Loft")</strong> Zazen. '.
            'Bitte tragt Euch bei den einzelnen Donnerstagen ein, seid ca. 10 - 15 Minuten früher da und bringt 5€ mit - der Raum wird stundenweise gemietet. '.
            '(Wem die 5€ Schwierigkeiten bereiten, der spreche uns bitte an.)'.
            '<br><br>'.
            'Dieser Kalender folgt dem ursprünglichen Wiki-Prinzip: jeder kann alles bearbeiten, '.
            'es gibt keine Anmeldung oder Ähnliches. Wir vertrauen darauf, dass Ihr sorgsam damit umgeht.';
+           */
   }
 
 
