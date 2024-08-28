@@ -31,7 +31,6 @@
   box-sizing: border-box;
   margin-top: 20px;
   padding: 10px !important; /* to overwrite blockquote:last-child */
-  font-weight: bold;
 }
 
 .mark
