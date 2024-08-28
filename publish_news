@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo rsync -aP ~/zendo.datastore/news.txt ftp93764-2611197@93764.webhosting35.1blu.de:~/www/zendo.datastore/news.txt
+sudo rsync -aP --dry-run ~/hasenbuelt/zendo.datastore/news.txt ftp93764-2611197@93764.webhosting35.1blu.de:~/www/zendo.datastore/news.txt
