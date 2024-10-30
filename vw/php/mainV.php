@@ -157,12 +157,12 @@ class mainV extends cAppV
           $str .= '<form action="/zendo/index.php/mainC/updateUser">';
           $str .= '<input name="rcpIdx"   type="hidden" value="'.$i.'">';
           $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
-          $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
+          $str .= '<input name="rcpHash"  type="hidden" value="'.($data['hash'] ?? '').'">';
           $str .= '<input name="rcpUser"
                           data-rcp-blur="/zendo/index.php/mainC/refreshDay"
                           data-rcp-stamp="'.$dateStamp.'"
                           data-rcp-idx="'.$i.'"
-                          data-rcp-hash="'.$data['hash'].'"
+                          data-rcp-hash="'.($data['hash'] ?? '').'"
                           type="text"
                           value="'.html_entity_decode($user, ENT_QUOTES).'">';
 
@@ -189,7 +189,7 @@ class mainV extends cAppV
                           name="rcpInput"
                           data-rcp-idx="'.$i.'"
                           data-rcp-stamp="'.$dateStamp.'"
-                          data-rcp-hash="'.$data['hash'].'"
+                          data-rcp-hash="'.($data['hash'] ?? '').'"
                           type="text"
                           readonly
                           value="'.html_entity_decode($user, ENT_QUOTES).'">';
@@ -206,12 +206,12 @@ class mainV extends cAppV
         $str .= '<form action="/zendo/index.php/mainC/updateUser">';
         $str .= '<input name="rcpIdx"   type="hidden" value="0">';
         $str .= '<input name="rcpStamp" type="hidden" value="'.$dateStamp.'">';
-        $str .= '<input name="rcpHash"  type="hidden" value="'.$data['hash'].'">';
+        $str .= '<input name="rcpHash"  type="hidden" value="'.($data['hash'] ?? '').'">';
         $str .= '<input name="rcpUser"
                         type="text"
                         data-rcp-blur="/zendo/index.php/mainC/refreshDay"
                         data-rcp-stamp="'.$dateStamp.'"
-                        data-rcp-hash="'.$data['hash'].'"
+                        data-rcp-hash="'.($data['hash'] ?? '').'"
                         value="Entfällt.">';
         $str .= '&nbsp;';
         $str .= '<input name="rcpSubm"  type="submit" value="OK">';
@@ -225,7 +225,7 @@ class mainV extends cAppV
                         name="rcpInput"
                         data-rcp-idx="0"
                         data-rcp-stamp="'.$dateStamp.'"
-                        data-rcp-hash="'.$data['hash'].'"
+                        data-rcp-hash="'.($data['hash'] ?? '').'"
                         type="text"
                         readonly
                         value="Entfällt.">';
