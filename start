@@ -1,2 +1,2 @@
 #! /bin/bash
-sudo docker run -d -p 8080:80 zendo
+sudo docker run -d -p 8080:80 -v ~/zendo.datastore:/var/www/html/zendo.datastore zendo
