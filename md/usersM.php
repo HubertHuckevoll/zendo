@@ -104,7 +104,7 @@
           $this->cleanUp();
           $fc = json_encode($this->data['content'], JSON_PRETTY_PRINT);
           $newHash = md5($fc);
-          if (file_put_contents($this->fname, $fc, LOCK_EX) !== false)
+          if (@file_put_contents($this->fname, $fc, LOCK_EX) !== false)
           {
             $this->data['hash'] = $newHash;
             return 'Gespeichert.';

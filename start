@@ -1,4 +1,11 @@
 #! /bin/bash
+
+# change ownership to match the UID and GID of www-data (usually UID 33, GID 33):
+sudo chown -R 33:33 ~/zendo.datastore
+
+# run docker
 sudo docker run -d -p 8080:80 -v ~/zendo.datastore:/var/www/html/zendo.datastore:rw zendo
+
+# tell the world
 echo Running at...
 echo http://127.0.0.1:8080/zendo/index.php
