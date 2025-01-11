@@ -56,7 +56,7 @@ class mainV extends cAppV
    * draw users for a day
    * ________________________________________________________________
    */
-  public function ajaxDrawDay(array $data, int $oldStamp = null, int $dateStamp, int|null $idx = null): void
+  public function ajaxDrawDay(array $data, ?int $oldStamp, int $dateStamp, ?int $idx = null): void
   {
     $rcp = new RecipeV();
 
@@ -139,7 +139,7 @@ class mainV extends cAppV
    * render day
    * ________________________________________________________________
    */
-  protected function renderDay(array $data, int $dateStamp, int|null $idx = null): string
+  protected function renderDay(array $data, int $dateStamp, ?int $idx = null): string
   {
     $str  = '';
     $str .= '<div class="dateCard__users__'.$dateStamp.'">';

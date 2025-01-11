@@ -4,10 +4,10 @@
   {
     public array $data = [];
     public string $fname = '';
-    const ERR_NOT_CHANGED = 1;
-    const ERR_DUPLICATE = 2;
-    const ERR_DAY_INACTIVE = 3;
-    const ERR_NOT_SAVED = 4;
+    public const ERR_NOT_CHANGED = 1;
+    public const ERR_DUPLICATE = 2;
+    public const ERR_DAY_INACTIVE = 3;
+    public const ERR_NOT_SAVED = 4;
 
     /**
      * Konstruktor
@@ -86,21 +86,28 @@
      */
     public function save(string $hash): string
     {
+      $fc = '';
+      $fHash = '';
+
       if ($this->data['content'] !== false)
       {
         $fc = @file_get_contents($this->fname);
-        if ($fc !== false)
+        if ($fc === false)
         {
-          if (md5($fc) == $hash)
+          $fc = '';
+          $hash = md5($fc);
+        }
+        $fHash = md5($fc);
+
+        if ($fHash == $hash)
+        {
+          $this->cleanUp();
+          $fc = json_encode($this->data['content'], JSON_PRETTY_PRINT);
+          $newHash = md5($fc);
+          if (file_put_contents($this->fname, $fc, LOCK_EX) !== false)
           {
-            $this->cleanUp();
-            $fc = json_encode($this->data['content'], JSON_PRETTY_PRINT);
-            $newHash = md5($fc);
-            if (@file_put_contents($this->fname, $fc, LOCK_EX) !== false)
-            {
-              $this->data['hash'] = $newHash;
-              return 'Gespeichert.';
-            }
+            $this->data['hash'] = $newHash;
+            return 'Gespeichert.';
           }
         }
       }

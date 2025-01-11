@@ -1,12 +1,13 @@
-# Use the latest version of PHP with Apache
+# Use the latest PHP with Apache
 FROM php:apache
 
-# Enable Apache mod_rewrite (optional but commonly used)
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# WORKDIR
+# Set work directory
 WORKDIR /var/www/html
 
+# Copy application files
 COPY zendo ./zendo
 COPY coins ./coins
 
