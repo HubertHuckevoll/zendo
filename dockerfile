@@ -10,12 +10,9 @@ USER www-data
 # Set work directory
 WORKDIR /var/www/html
 
-# Copy application files
-COPY zendo ./zendo
-COPY coins ./coins
-
-# Set ownership of the application directory to www-data
-RUN chown -R www-data:www-data /var/www/html
+# Copy application files with ownership set
+COPY --chown=www-data:www-data zendo ./zendo
+COPY --chown=www-data:www-data coins ./coins
 
 # Expose port 80
 EXPOSE 80
