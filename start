@@ -4,7 +4,7 @@
 sudo chown -R 33:33 ~/zendo.datastore
 
 # run docker
-sudo docker run -d -p 8080:80 -v ~/zendo.datastore:/var/www/html/zendo.datastore:rw zendo
+sudo docker run -d -p 8080:80 -v ~/zendo.datastore:/var/www/html/zendo.datastore zendo
 
 # tell the world
 echo Running at...
