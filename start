@@ -8,28 +8,28 @@ HOST_HTTPS_PORT=443
 DATASTORE_DIR="$HOME/zendo.datastore"
 LETSENCRYPT_VOLUME="letsencrypt"
 
-# Ensure data directory exists with correct permissions (UID/GID 33 for www-data)
-echo "Setting permissions for $DATASTORE_DIR to www-data (UID 33, GID 33)..."
+# Ensure data directory exists and set permissions
+echo "Setting permissions for $DATASTORE_DIR..."
 mkdir -p "$DATASTORE_DIR"
 sudo chown -R 33:33 "$DATASTORE_DIR"
 
-# Check if container is already running and stop it if necessary
+# Stop running container if it exists
 if [ "$(sudo docker ps -q -f name=$CONTAINER_NAME)" ]; then
-    echo "Container $CONTAINER_NAME already running. Stopping it first..."
+    echo "Stopping running container $CONTAINER_NAME..."
     sudo docker stop "$CONTAINER_NAME"
 fi
 
-# Remove existing container if present
+# Remove existing stopped container if it exists
 if [ "$(sudo docker ps -aq -f status=exited -f name=$CONTAINER_NAME)" ]; then
     echo "Removing existing container $CONTAINER_NAME..."
     sudo docker rm "$CONTAINER_NAME"
 fi
 
-# Build the Docker image
+# Build Docker image
 echo "Building Docker image $IMAGE_NAME..."
 sudo docker build -t "$IMAGE_NAME" .
 
-# Run Docker container with Let's Encrypt volume for certificate persistence
+# Run Docker container
 echo "Starting Docker container $CONTAINER_NAME..."
 sudo docker run -d \
     --name "$CONTAINER_NAME" \
@@ -38,23 +38,22 @@ sudo docker run -d \
     -v "$LETSENCRYPT_VOLUME":/etc/letsencrypt \
     "$IMAGE_NAME"
 
-# Wait briefly to confirm container is running
 sleep 3
 
-# Verify container status
+# Check if container started successfully
 if [ "$(sudo docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo "Container '$CONTAINER_NAME' started successfully."
-    echo "Your application is now accessible at:"
-    echo "   HTTP:  http://localhost/"
-    echo "   HTTPS: https://meyerk.de/"
+    echo "Application is accessible at:"
+    echo "  HTTP:  http://localhost/"
+    echo "  HTTPS: https://meyerk.de/"
 else
-    echo "Failed to start container '$CONTAINER_NAME'. Check logs using:"
-    echo "   sudo docker logs $CONTAINER_NAME"
+    echo "Container '$CONTAINER_NAME' failed to start. Check logs:"
+    echo "  sudo docker logs $CONTAINER_NAME"
     exit 1
 fi
 
-# Set up automatic Let's Encrypt certificate renewal via Docker exec cron job
-echo "Setting up automatic Let's Encrypt certificate renewal..."
+# Set up automatic Let's Encrypt certificate renewal
+echo "Setting up automatic certificate renewal..."
 sudo docker exec "$CONTAINER_NAME" bash -c "echo '0 3 * * * root certbot renew --quiet' > /etc/cron.d/certbot-renew && cron"
 
-echo "✅ Automatic certificate renewal has been set up successfully."
+echo "Automatic SSL certificate renewal configured."
