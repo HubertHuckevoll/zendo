@@ -1,11 +1,19 @@
 #!/bin/bash
 
-# Create symbolic link to coins directory (one level up)
-echo "Creating symbolic link to '../coins' directory..."
-ln -sf ../coins ./coins
+# Remove existing coins directory/link if exists
+echo "Preparing build context..."
+rm -rf ./coins
+
+# Temporarily copy 'coins' directory into build context
+echo "Copying 'coins' directory into build context..."
+cp -r ../coins ./coins
 
 # Build the Docker image
 echo "Building Docker image 'zendo'..."
 sudo docker build -t zendo -f dockerfile .
+
+# Clean up temporary copied directory after build
+echo "Cleaning up temporary 'coins' directory..."
+rm -rf ./coins
 
 echo "Docker image 'zendo' built successfully."
