@@ -1,32 +1,31 @@
 FROM php:apache
 
-# Apache-Module aktivieren
+# Enable Apache modules for rewrite and SSL
 RUN a2enmod rewrite ssl
 
-# Certbot und Cron installieren
+# Install Certbot, cron, and dependencies
 RUN apt-get update && \
     apt-get install -y certbot python3-certbot-apache cron && \
     rm -rf /var/lib/apt/lists/*
 
-# Nutzer wechseln und Arbeitsverzeichnis setzen
+# Set user and working directory
 USER www-data
 WORKDIR /var/www/html
 
-# Kopiere die App-Dateien
-COPY --chown=www-data:www-data zendo ./zendo
+# Copy application files (current folder to 'zendo') and coins folder
+COPY --chown=www-data:www-data . ./zendo
 COPY --chown=www-data:www-data coins ./coins
 
-# HTTP und HTTPS Ports freigeben
+# Expose ports for HTTP and HTTPS
 EXPOSE 80 443
 
-# Automatische Zertifikat-Erneuerung per Cronjob einrichten
+# Set up automatic certificate renewal cron job and run Apache in foreground
 USER root
 RUN echo "0 3 * * * root certbot renew --quiet" > /etc/cron.d/certbot-renew && \
     chmod 0644 /etc/cron.d/certbot-renew && \
     crontab /etc/cron.d/certbot-renew
 
-# Starte Cron und Apache (mit erstmaliger Zertifikat-Erstellung)
 CMD ["/bin/bash", "-c", "\
   certbot --apache --non-interactive --agree-tos \
-    --email konstantin.meyer@gmail.com -d meyerk.de && \
+  --email konstantin.meyer@gmail.com -d meyerk.de && \
   cron && apache2-foreground"]
