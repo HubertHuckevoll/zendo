@@ -48,8 +48,9 @@ else
     exit 1
 fi
 
-# Set up automatic Let's Encrypt certificate renewal
-echo "Setting up automatic certificate renewal..."
-sudo docker exec "$CONTAINER_NAME" bash -c "echo '0 3 * * * root certbot renew --quiet' > /etc/cron.d/certbot-renew && cron"
+# Set up automatic Let's Encrypt certificate renewal (cron is already running!)
+echo "Ensuring automatic certificate renewal is configured..."
+sudo docker exec "$CONTAINER_NAME" bash -c \
+  "echo '0 3 * * * root certbot renew --quiet' > /etc/cron.d/certbot-renew"
 
 echo "Automatic SSL certificate renewal configured."
