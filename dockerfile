@@ -26,6 +26,8 @@ RUN echo "0 3 * * * root certbot renew --quiet" > /etc/cron.d/certbot-renew && \
     crontab /etc/cron.d/certbot-renew
 
 CMD ["/bin/bash", "-c", "\
-  certbot --apache --non-interactive --agree-tos \
-  --email konstantin.meyer@gmail.com -d meyerk.de && \
-  cron && apache2-foreground"]
+        certbot --apache --non-interactive --agree-tos \
+        --email konstantin.meyer@gmail.com -d meyerk.de && \
+        cron -f & \
+        apache2-foreground"]
+
