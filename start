@@ -25,11 +25,7 @@ if [ "$(sudo docker ps -aq -f status=exited -f name=$CONTAINER_NAME)" ]; then
     sudo docker rm "$CONTAINER_NAME"
 fi
 
-# Build Docker image
-echo "Building Docker image $IMAGE_NAME..."
-sudo docker build -t "$IMAGE_NAME" .
-
-# Run Docker container
+# Start Docker container (assuming image is already built)
 echo "Starting Docker container $CONTAINER_NAME..."
 sudo docker run -d \
     --name "$CONTAINER_NAME" \
