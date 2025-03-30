@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuration
-CONTAINER_NAME="zendo_https"
-IMAGE_NAME="zendo_https"
+CONTAINER_NAME="zendo"
+IMAGE_NAME="zendo"
 HOST_HTTP_PORT=80
 HOST_HTTPS_PORT=443
 DATASTORE_DIR="$HOME/zendo.datastore"
