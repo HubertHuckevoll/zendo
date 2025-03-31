@@ -40,8 +40,7 @@ sleep 3
 if [ "$(sudo docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo "Container '$CONTAINER_NAME' started successfully."
     echo "Application is accessible at:"
-    echo "  HTTP:  http://localhost/"
-    echo "  HTTPS: https://meyerk.de/"
+    echo "  HTTPS: https://meyerk.de/zendo/index.php"
 else
     echo "Container '$CONTAINER_NAME' failed to start. Check logs:"
     echo "  sudo docker logs $CONTAINER_NAME"
