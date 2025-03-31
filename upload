@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# to be run via SSH when logged in on synology
-# add --dry-run for test
-sudo rsync -aP /var/services/web/zendo ftp93764-2611197@93764.webhosting35.1blu.de:~/www/
